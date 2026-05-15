@@ -53,6 +53,7 @@ class GameView(arcade.Window):
         # This variable will store our score as an integer.
         self.score = 0
 
+        # Initialization of score on screen + loading it
         self.score_manager = ScoreManager()
         self.highscore = self.score_manager.highscore
 
@@ -157,6 +158,7 @@ class GameView(arcade.Window):
         # Draw our Score
         self.score_text.draw()
 
+        #Displays the highest score on the screen
         highscore_text = arcade.Text(
             f"High Score: {self.highscore}",
             x=0,
@@ -296,6 +298,8 @@ class GameView(arcade.Window):
                 arcade.play_sound(self.sound_hit)
                 self.i_frame = 1.5
 
+                #Save new high score if current score is higher
+                # and updating display of that score
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
                     self.score_manager.save_highscore(self.score)
