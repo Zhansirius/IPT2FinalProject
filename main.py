@@ -4,10 +4,7 @@ from GameView import GameView
 from Player import PlayerCharacter
 
 def load_texture_pair(filename):
-    """
-    Загружает пару текстур: обычную и отзеркаленную.
-    Работает в Arcade 3.x
-    """
+    """ Загружает пару текстур: обычную и отзеркаленную. Работает в Arcade 3.x """
     texture = arcade.load_texture(filename)
     return [
         texture,

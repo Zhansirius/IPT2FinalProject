@@ -1,4 +1,5 @@
 from constants import *
+from score_manager import ScoreManager
 import arcade
 from Player import PlayerCharacter
 class GameView(arcade.Window):
@@ -51,6 +52,9 @@ class GameView(arcade.Window):
 
         # This variable will store our score as an integer.
         self.score = 0
+
+        self.score_manager = ScoreManager()
+        self.highscore = self.score_manager.highscore
 
         # Direction flags
         self.left_pressed = False
@@ -152,6 +156,14 @@ class GameView(arcade.Window):
 
         # Draw our Score
         self.score_text.draw()
+
+        highscore_text = arcade.Text(
+            f"High Score: {self.highscore}",
+            x=0,
+            y=35
+        )
+
+        highscore_text.draw()
 
     def update_player_speed(self):
         self.player_sprite.change_x = 0
@@ -286,6 +298,8 @@ class GameView(arcade.Window):
 
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
+                    self.score_manager.save_highscore(self.score)
+                    self.highscore = self.score_manager.highscore
                     self.setup()
 
         # Check if player fall to the abyss
