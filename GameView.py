@@ -119,13 +119,40 @@ class GameView(arcade.View):
             print("Предупреждение: Слой 'Enemy' не найден в сцене!")
             self.scene.add_sprite_list("Enemy")
 
-        # 6. Физика (стены берем из слоя Tile Layer 1)
+        # 6. Физика (базовая настройка) - ЭТОТ БЛОК СТАТИЧНЫХ СТЕН УДАЛИ И ОСТАВЬ ТОЛЬКО НИЖНИЙ
+        # --- ЗАГРУЗКА ДВИЖУЩИХСЯ ПЛАТФОРМ ---
+        try:
+            moving_platforms = self.scene.get_sprite_list("Moving Platforms")
+            for platform in moving_platforms:
+                # Считываем скорость (теперь можно задавать и change_y для вертикальных)
+                platform.change_x = float(platform.properties.get("change_x", 0.0))
+                platform.change_y = float(platform.properties.get("change_y", 0.0))
+
+                # Проверяем, задана ли дистанция движения в Tiled
+                if "move_distance" in platform.properties:
+                    platform.move_distance = float(platform.properties.get("move_distance"))
+                    platform.distance_traveled = 0.0  # Счетчик пройденных пикселей
+                else:
+                    platform.move_distance = None  # Значит, эта платформа работает по коллизиям
+        except KeyError:
+            print("Предупреждение: Слой 'Moving Platforms' не найден в карте!")
+            self.scene.add_sprite_list("Moving Platforms")
+            moving_platforms = self.scene.get_sprite_list("Moving Platforms")
+
+        # Создаем физический движок
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
             walls=self.scene["Touchable"],
+            platforms=moving_platforms,
             gravity_constant=GRAVITY
         )
-
+        # Создаем физический движок ОДИН раз, передавая ВСЁ сразу
+        self.physics_engine = arcade.PhysicsEnginePlatformer(
+            self.player_sprite,
+            walls=self.scene["Touchable"],
+            platforms=moving_platforms,
+            gravity_constant=GRAVITY
+        )
         # Камеры и интерфейс
         self.camera = arcade.Camera2D()
         self.camera.zoom = 1.2  # <--- ДОБАВЛЯЕМ ПРИБЛИЖЕНИЕ (сделайте персонажа крупнее)
@@ -205,12 +232,9 @@ class GameView(arcade.View):
 
         # --- ЛОГИКА НАНЕСЕНИЯ УРОНА (ДВОЙНОЙ УДАР) ---
         if self.player_sprite.is_attacking:
-            # Определяем кадры для ударов (подбери индексы под свою анимацию)
-            # Если Attack1 (6 кадров) и Attack2 (6 кадров)
-            first_hit_frame = 3  # Первый взмах
-            second_hit_frame = 9  # Второй взмах
+            first_hit_frame = 3
+            second_hit_frame = 9
 
-            # Проверяем, наступил ли момент для какого-то из ударов
             current_frame = self.player_sprite.cur_texture
             should_hit = False
 
@@ -221,19 +245,17 @@ class GameView(arcade.View):
                 self.player_sprite.hit_2_done = True
                 should_hit = True
 
-            # Если пора бить — спавним хитбокс
             if should_hit:
                 attack_hitbox = arcade.SpriteSolidColor(70, 50, color=arcade.color.RED)
                 attack_hitbox.bottom = self.player_sprite.bottom
 
-                if self.player_sprite.character_face_direction == 0:  # Вправо
+                if self.player_sprite.character_face_direction == 0:
                     attack_hitbox.left = self.player_sprite.right
-                else:  # Влево
+                else:
                     attack_hitbox.right = self.player_sprite.left
 
                 self.draw_attack_rect = attack_hitbox
 
-                # Проверка столкновений с врагами
                 hit_enemies = arcade.check_for_collision_with_list(attack_hitbox, self.scene["Enemy"])
                 for enemy in hit_enemies:
                     if hasattr(enemy, "health"):
@@ -246,39 +268,30 @@ class GameView(arcade.View):
 
         # --- УМНОЕ ЦЕНТРИРОВАНИЕ И ОГРАНИЧЕНИЕ КАМЕРЫ ---
         zoom = self.camera.zoom
-
-        # Вычисляем реальный размер видимой зоны в игровом мире с учетом масштаба
         visible_width = self.width / zoom
         visible_height = self.height / zoom
 
         half_w = visible_width / 2
         half_h = visible_height / 2
 
-        # Ограничение по горизонтали (ось X)
         if self.end_of_map < visible_width:
-            # Если уровень узкий/вертикальный, фиксируем камеру строго по центру ширины карты
             camera_x = self.end_of_map / 2
         else:
-            # Если уровень широкий, плавно ведем за игроком
             camera_x = self.player_sprite.center_x
             if camera_x < half_w:
                 camera_x = half_w
             elif camera_x > self.end_of_map - half_w:
                 camera_x = self.end_of_map - half_w
 
-        # Ограничение по вертикали (ось Y)
         if self.top_of_map < visible_height:
-            # Если уровень низкий, фиксируем по центру высоты карты
             camera_y = self.top_of_map / 2
         else:
-            # Если уровень высокий, ведем камеру вверх/вниз за прыжками
             camera_y = self.player_sprite.center_y
             if camera_y < half_h:
                 camera_y = half_h
             elif camera_y > self.top_of_map - half_h:
                 camera_y = self.top_of_map - half_h
 
-        # Применяем выверенные координаты
         self.camera.position = (camera_x, camera_y)
 
         # ENEMY MOVEMENT LOGIC
@@ -287,45 +300,33 @@ class GameView(arcade.View):
             walls = self.scene["Touchable"]
 
             for enemy in enemy_list:
-
-                # 1. GRAVITY (We leave it so that they stand on the floor correctly when they spawn)
                 enemy.change_y -= GRAVITY
                 enemy.center_y += enemy.change_y
 
-                # Floor collision check
                 hit_list_y = arcade.check_for_collision_with_list(enemy, walls)
                 for wall in hit_list_y:
-                    if enemy.change_y < 0:  # The enemy falls to the floor
+                    if enemy.change_y < 0:
                         enemy.bottom = wall.top
                         enemy.change_y = 0
-                    elif enemy.change_y > 0:  # The enemy hits his head
+                    elif enemy.change_y > 0:
                         enemy.top = wall.bottom
                         enemy.change_y = 0
 
-                # If the X-speed is 0, skip the walking logic.
                 if enemy.change_x == 0:
                     continue
 
-                # --- 2. CHECK THE ABYSS FOR ALL ENEMIES ---
-                # We don't check is_smart anymore. Every slug looks at its feet.
                 look_ahead = 15 if enemy.change_x > 0 else -15
                 check_point = (enemy.center_x + look_ahead, enemy.bottom - 5)
-
                 ground_ahead = arcade.get_sprites_at_point(check_point, walls)
 
                 if not ground_ahead:
-                    # There's no land ahead! We're turning around.
                     enemy.change_x *= -1
 
-                # 3. MOVEMENT ALONG X
                 enemy.center_x += enemy.change_x
 
-                # 4. CHECKING THE WALLS
                 if arcade.check_for_collision_with_list(enemy, walls):
-                    # If you hit a wall, change direction
                     enemy.change_x *= -1
                     enemy.center_x += enemy.change_x
-
         except KeyError:
             pass
 
@@ -335,7 +336,6 @@ class GameView(arcade.View):
             self.player_sprite.alpha = 150
         else:
             self.player_sprite.alpha = 255
-
             hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.scene["Enemy"])
 
             if len(hit_list) > 0:
@@ -343,8 +343,6 @@ class GameView(arcade.View):
                 arcade.play_sound(self.sound_hit)
                 self.i_frame = 1.5
 
-                #Save new high score if current score is higher
-                # and updating display of that score
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
                     # Save new high score to JSON file if current score is higher
@@ -355,22 +353,78 @@ class GameView(arcade.View):
                     self.highscore_text.text = f"High Score: {self.highscore}"
                     self.setup()
 
-        # Check if player fall to the abyss
+        # --- ЛОГИКА ДВИЖУЩИХСЯ ПЛАТФОРМ (ДВА РЕЖИМА) ---
+        try:
+            moving_platforms = self.scene.get_sprite_list("Moving Platforms")
+            walls = self.scene["Touchable"]
+
+            # Разделяем платформы на две группы по их поведению
+            distance_platforms = [p for p in moving_platforms if p.move_distance is not None]
+            collision_platforms = [p for p in moving_platforms if p.move_distance is None]
+
+            # === РЕЖИМ 1: РАЗВОР ОТ ПО ДИСТАНЦИИ (Новый код) ===
+            for platform in distance_platforms:
+                # Смещаем по X и считаем расстояние
+                if platform.change_x != 0:
+                    platform.center_x += platform.change_x
+                    platform.distance_traveled += abs(platform.change_x)
+
+                # Смещаем по Y и считаем расстояние
+                if platform.change_y != 0:
+                    platform.center_y += platform.change_y
+                    platform.distance_traveled += abs(platform.change_y)
+
+                # Если прошли нужную дистанцию — разворачиваемся
+                if platform.distance_traveled >= platform.move_distance:
+                    if platform.change_x != 0:
+                        platform.change_x *= -1
+                    if platform.change_y != 0:
+                        platform.change_y *= -1
+                    platform.distance_traveled = 0.0  # Сбрасываем счетчик для обратного пути
+
+            # === РЕЖИМ 2: РАЗВОР ОТ ОТ СТЕН (Твой прошлый рабочий код с platform_id) ===
+            if collision_platforms:
+                # 1. Двигаем вперед
+                for platform in collision_platforms:
+                    if platform.change_x != 0:
+                        platform.center_x += platform.change_x
+                    if platform.change_y != 0:
+                        platform.center_y += platform.change_y
+
+                broken_platforms_x = set()
+                broken_platforms_y = set()
+
+                # 2. Проверяем коллизии со стенами Touchable
+                for platform in collision_platforms:
+                    if arcade.check_for_collision_with_list(platform, walls):
+                        pid = platform.properties.get("platform_id", 0)
+                        if platform.change_x != 0:
+                            broken_platforms_x.add(pid)
+                        if platform.change_y != 0:
+                            broken_platforms_y.add(pid)
+
+                # 3. Синхронно разворачиваем группу
+                for platform in collision_platforms:
+                    pid = platform.properties.get("platform_id", 0)
+                    if pid in broken_platforms_x:
+                        platform.change_x *= -1
+                        platform.center_x += platform.change_x
+                    if pid in broken_platforms_y:
+                        platform.change_y *= -1
+                        platform.center_y += platform.change_y
+
+        except KeyError:
+            pass
         # Check if player fall to the abyss
         if self.player_sprite.center_y < -100:
-            # Убрали self.level = 1, чтобы игра запомнила текущий уровень
-            self.reset_score = True  # Оставляем, чтобы сбросить здоровье и очки до начальных
+            self.reset_score = True
             self.setup()
 
         # Check if the player got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:
-            # Advance to the next level
             self.level += 1
-            # Turn off score reset when advancing level
             self.reset_score = False
-            # Reload game with new level
             self.setup()
-
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         # ПОЛНЫЙ ЭКРАН НА F4
