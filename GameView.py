@@ -17,10 +17,10 @@ class GameView(arcade.View):
         self.draw_attack_rect = None
 
         # Default sounds
-        self.sound_attack = arcade.load_sound("assets/sounds/ShovelHitDefault.mp3")
-        self.sound_hit = arcade.load_sound("assets/sounds/hurt grunt .wav")
-        self.sound_hit1 = arcade.load_sound("assets/sounds/hurt grunt 2.wav")
-        self.sound_hurt = arcade.load_sound("assets/sounds/isaac dies new 1.wav")
+        self.sound_attack = arcade.load_sound("assets/sounds/undertale-slash.mp3")
+        self.sound_hit = arcade.load_sound("assets/sounds/undertale-damage-taken.mp3")
+        self.sound_hit1 = arcade.load_sound("assets/sounds/undertale-sound-effect-attack-hit.mp3")
+        self.sound_hurt = arcade.load_sound("assets/sounds/undertale-soul-shatter.mp3")
 
         self.bg_camera = arcade.Camera2D()
 
