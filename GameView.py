@@ -139,6 +139,30 @@ class GameView(arcade.View):
             self.scene.add_sprite_list("Moving Platforms")
             moving_platforms = self.scene.get_sprite_list("Moving Platforms")
 
+        # --- ЗАГРУЗКА ДИНАМИЧЕСКИХ ШИПОВ ---
+        try:
+            self.spikes_list = self.scene.get_sprite_list("Spikes")
+            for spike in self.spikes_list:
+                # Запоминаем верхнюю (активную) точку
+                spike.max_y = spike.center_y
+
+                # Считываем настройки из Tiled
+                spike.hide_time = float(spike.properties.get("hide_time", 2.0))
+                spike.active_time = float(spike.properties.get("active_time", 1.5))
+                pop_height = float(spike.properties.get("pop_height", 32.0))
+
+                # Вычисляем нижнюю (скрытую) точку и прячем шип сразу при старте
+                spike.min_y = spike.max_y - pop_height
+                spike.center_y = spike.min_y
+
+                # Задаем начальное состояние
+                spike.state = "hidden"
+                spike.timer = 0.0
+        except KeyError:
+            print("Предупреждение: Слой 'Spikes' не найден в карте!")
+            self.scene.add_sprite_list("Spikes")
+            self.spikes_list = self.scene.get_sprite_list("Spikes")
+
         # Создаем физический движок
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
@@ -412,6 +436,57 @@ class GameView(arcade.View):
                     if pid in broken_platforms_y:
                         platform.change_y *= -1
                         platform.center_y += platform.change_y
+
+        except KeyError:
+            pass
+
+        # --- ЛОГИКА РАБОТЫ ШИПОВ (КОНЕЧНЫЙ АВТОМАТ) ---
+        try:
+            for spike in self.spikes_list:
+                spike.timer += delta_time
+
+                # Состояние 1: Сидят под землей и ждут
+                if spike.state == "hidden":
+                    if spike.timer >= spike.hide_time:
+                        spike.state = "rising"
+                        spike.timer = 0.0
+
+                # Состояние 2: Вылезают вверх
+                elif spike.state == "rising":
+                    spike.center_y += 4.0  # Скорость вылета шипов
+                    if spike.center_y >= spike.max_y:
+                        spike.center_y = spike.max_y
+                        spike.state = "active"
+                        spike.timer = 0.0
+
+                # Состояние 3: Полностью вылезли, опасны!
+                elif spike.state == "active":
+                    if spike.timer >= spike.active_time:
+                        spike.state = "falling"
+                        spike.timer = 0.0
+
+                    # НАНОСИМ УРОН: Только если шип активен и игрок наступил на хитбокс кончика
+                    if arcade.check_for_collision(self.player_sprite, spike):
+                        if self.i_frame <= 0:  # Проверка фреймов неуязвимости
+                            self.p_hp -= 1
+                            arcade.play_sound(self.sound_hit)
+                            self.i_frame = 1.5
+
+                            # Если здоровье упало до нуля — перезапуск
+                            if self.p_hp <= 0:
+                                arcade.play_sound(self.sound_hurt)
+                                self.score_manager.save_highscore(self.score)
+                                self.highscore = self.score_manager.highscore
+                                self.setup()
+                                break
+
+                # Состояние 4: Уходят обратно под землю
+                elif spike.state == "falling":
+                    spike.center_y -= 4.0  # Скорость ухода
+                    if spike.center_y <= spike.min_y:
+                        spike.center_y = spike.min_y
+                        spike.state = "hidden"
+                        spike.timer = 0.0
 
         except KeyError:
             pass
