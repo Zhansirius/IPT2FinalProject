@@ -2,13 +2,11 @@ from constants import *
 from score_manager import ScoreManager
 import arcade
 from Player import PlayerCharacter
-class GameView(arcade.Window):
+class GameView(arcade.View):
     """ Main application class. """
 
     def __init__(self):
-
-        # Call the parent class and set up the window
-        super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+        super().__init__()
         # Player's hp
         self.p_hp = 5
         # Invincible frames
@@ -140,8 +138,18 @@ class GameView(arcade.Window):
         self.reset_score = True
         self.i_frame = 0
 
-        self.score_text = arcade.Text(f"Score: {self.score}", x=0, y=5)
+        self.score_text = arcade.Text(
+            f"Score: {self.score}",
+            x=20,
+            y=self.window.height - 80
+        )
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
+
+        self.highscore_text = arcade.Text(
+            f"High Score: {self.highscore}",
+            x=20,
+            y=self.window.height - 120
+        )
 
     def on_draw(self):
         """Render the screen."""
@@ -166,14 +174,9 @@ class GameView(arcade.Window):
         # Draw our Score
         self.score_text.draw()
 
-        #Displays the highest score on the screen
-        highscore_text = arcade.Text(
-            f"High Score: {self.highscore}",
-            x=0,
-            y=35
-        )
 
-        highscore_text.draw()
+        # Draw saved high score on the GUI layer
+        self.highscore_text.draw()
 
     def update_player_speed(self):
         self.player_sprite.change_x = 0
@@ -344,8 +347,12 @@ class GameView(arcade.Window):
                 # and updating display of that score
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
+                    # Save new high score to JSON file if current score is higher
                     self.score_manager.save_highscore(self.score)
+                    # Update loaded high score
                     self.highscore = self.score_manager.highscore
+                    # Update text on screen
+                    self.highscore_text.text = f"High Score: {self.highscore}"
                     self.setup()
 
         # Check if player fall to the abyss
@@ -368,7 +375,15 @@ class GameView(arcade.Window):
         """Called whenever a key is pressed."""
         # ПОЛНЫЙ ЭКРАН НА F4
         if key == arcade.key.F4:
-            self.set_fullscreen(not self.fullscreen)
+            # Toggle fullscreen mode
+            self.window.set_fullscreen(
+                not self.window.fullscreen
+            )
+
+            # Update cameras to new window size
+            self.camera.match_window()
+            self.gui_camera.match_window()
+            self.bg_camera.match_window()
 
         if key == arcade.key.ESCAPE:
             self.setup()
@@ -414,7 +429,7 @@ class GameView(arcade.Window):
         super().on_resize(width, height)
 
         # Обновляем область вывода графического контекста
-        self.ctx.viewport = (0, 0, width, height)
+        self.window.ctx.viewport = (0, 0, width, height)
 
         # Корректируем внутренние параметры камер под новое разрешение окна
         if hasattr(self, "camera") and self.camera:
@@ -425,3 +440,10 @@ class GameView(arcade.Window):
 
         if hasattr(self, "bg_camera") and self.bg_camera:
             self.bg_camera.match_window()
+
+        # Reposition GUI text after window resize
+        self.score_text.x = 20
+        self.score_text.y = height - 100
+
+        self.highscore_text.x = 20
+        self.highscore_text.y = height - 130

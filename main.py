@@ -1,3 +1,4 @@
+from MenuView import MenuView
 from constants import *
 import arcade
 from GameView import GameView
@@ -13,8 +14,11 @@ def load_texture_pair(filename):
 
 def main():
     """Main function"""
-    window = GameView()
-    window.setup()
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+
+    menu_view = MenuView()
+    window.show_view(menu_view)
+
     arcade.run()
 
 
