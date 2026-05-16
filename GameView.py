@@ -73,22 +73,28 @@ class GameView(arcade.Window):
 
     def setup(self):
 
+        # 1. Определяем индивидуальный масштаб для каждого уровня
+        if self.level >= 5:
+            current_tile_scaling = 1.0
+        else:
+            current_tile_scaling = 1.5
         """Настройка игры. Вызывайте для перезапуска."""
         layer_options = {
-            "Tile Layer 1": {
+            "Touchable": {
                 "use_spatial_hash": True
             }
         }
 
         self.tile_map = arcade.load_tilemap(
             f"assets/lvls/test_lvl{self.level}.tmx",
-            scaling=TILE_SCALING,
+            scaling=current_tile_scaling,
             layer_options=layer_options
         )
-
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
         self.end_of_map = (self.tile_map.width * self.tile_map.tile_width) * self.tile_map.scaling
+
+        self.top_of_map = (self.tile_map.height * self.tile_map.tile_height) * self.tile_map.scaling
 
         self.player_sprite = PlayerCharacter() # Используем наш новый класс
         self.scene.add_sprite("Player", self.player_sprite)
@@ -118,13 +124,15 @@ class GameView(arcade.Window):
         # 6. Физика (стены берем из слоя Tile Layer 1)
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
-            walls=self.scene["Tile Layer 1"],
+            walls=self.scene["Touchable"],
             gravity_constant=GRAVITY
         )
 
         # Камеры и интерфейс
         self.camera = arcade.Camera2D()
+        self.camera.zoom = 1.2  # <--- ДОБАВЛЯЕМ ПРИБЛИЖЕНИЕ (сделайте персонажа крупнее)
         self.gui_camera = arcade.Camera2D()
+        self.gui_camera.match_window()
 
         if self.reset_score:
             self.score = 0
@@ -233,51 +241,85 @@ class GameView(arcade.Window):
                             self.score += 50
                             self.score_text.text = f"Score: {self.score}"
 
-        # Center our camera on the player
-        self.camera.position = self.player_sprite.position
+        # --- УМНОЕ ЦЕНТРИРОВАНИЕ И ОГРАНИЧЕНИЕ КАМЕРЫ ---
+        zoom = self.camera.zoom
 
-        # --- ЛОГИКА ДВИЖЕНИЯ ВРАГОВ ---
+        # Вычисляем реальный размер видимой зоны в игровом мире с учетом масштаба
+        visible_width = self.width / zoom
+        visible_height = self.height / zoom
+
+        half_w = visible_width / 2
+        half_h = visible_height / 2
+
+        # Ограничение по горизонтали (ось X)
+        if self.end_of_map < visible_width:
+            # Если уровень узкий/вертикальный, фиксируем камеру строго по центру ширины карты
+            camera_x = self.end_of_map / 2
+        else:
+            # Если уровень широкий, плавно ведем за игроком
+            camera_x = self.player_sprite.center_x
+            if camera_x < half_w:
+                camera_x = half_w
+            elif camera_x > self.end_of_map - half_w:
+                camera_x = self.end_of_map - half_w
+
+        # Ограничение по вертикали (ось Y)
+        if self.top_of_map < visible_height:
+            # Если уровень низкий, фиксируем по центру высоты карты
+            camera_y = self.top_of_map / 2
+        else:
+            # Если уровень высокий, ведем камеру вверх/вниз за прыжками
+            camera_y = self.player_sprite.center_y
+            if camera_y < half_h:
+                camera_y = half_h
+            elif camera_y > self.top_of_map - half_h:
+                camera_y = self.top_of_map - half_h
+
+        # Применяем выверенные координаты
+        self.camera.position = (camera_x, camera_y)
+
+        # ENEMY MOVEMENT LOGIC
         try:
             enemy_list = self.scene.get_sprite_list("Enemy")
-            walls = self.scene["Tile Layer 1"]
+            walls = self.scene["Touchable"]
 
             for enemy in enemy_list:
 
-                # --- 1. ГРАВИТАЦИЯ (Оставляем, чтобы они корректно вставали на пол при спавне) ---
+                # 1. GRAVITY (We leave it so that they stand on the floor correctly when they spawn)
                 enemy.change_y -= GRAVITY
                 enemy.center_y += enemy.change_y
 
-                # Проверка столкновения с полом
+                # Floor collision check
                 hit_list_y = arcade.check_for_collision_with_list(enemy, walls)
                 for wall in hit_list_y:
-                    if enemy.change_y < 0:  # Враг падает на пол
+                    if enemy.change_y < 0:  # The enemy falls to the floor
                         enemy.bottom = wall.top
                         enemy.change_y = 0
-                    elif enemy.change_y > 0:  # Враг ударяется головой
+                    elif enemy.change_y > 0:  # The enemy hits his head
                         enemy.top = wall.bottom
                         enemy.change_y = 0
 
-                # Если скорость по оси X равна 0, пропускаем логику ходьбы
+                # If the X-speed is 0, skip the walking logic.
                 if enemy.change_x == 0:
                     continue
 
-                # --- 2. ПРОВЕРКА ПРОПАСТИ ДЛЯ ВСЕХ ВРАГОВ ---
-                # Теперь мы не проверяем is_smart. Каждый слизень смотрит себе под ноги.
+                # --- 2. CHECK THE ABYSS FOR ALL ENEMIES ---
+                # We don't check is_smart anymore. Every slug looks at its feet.
                 look_ahead = 15 if enemy.change_x > 0 else -15
                 check_point = (enemy.center_x + look_ahead, enemy.bottom - 5)
 
                 ground_ahead = arcade.get_sprites_at_point(check_point, walls)
 
                 if not ground_ahead:
-                    # Земли впереди нет! Разворачиваемся
+                    # There's no land ahead! We're turning around.
                     enemy.change_x *= -1
 
-                # --- 3. ДВИЖЕНИЕ ПО X ---
+                # 3. MOVEMENT ALONG X
                 enemy.center_x += enemy.change_x
 
-                # --- 4. ПРОВЕРКА СТЕН ---
+                # 4. CHECKING THE WALLS
                 if arcade.check_for_collision_with_list(enemy, walls):
-                    # Если врезались в стену, меняем направление
+                    # If you hit a wall, change direction
                     enemy.change_x *= -1
                     enemy.center_x += enemy.change_x
 
@@ -307,9 +349,10 @@ class GameView(arcade.Window):
                     self.setup()
 
         # Check if player fall to the abyss
+        # Check if player fall to the abyss
         if self.player_sprite.center_y < -100:
-            self.level = 1
-            self.reset_score = True
+            # Убрали self.level = 1, чтобы игра запомнила текущий уровень
+            self.reset_score = True  # Оставляем, чтобы сбросить здоровье и очки до начальных
             self.setup()
 
         # Check if the player got to the end of the level
@@ -323,6 +366,9 @@ class GameView(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
+        # ПОЛНЫЙ ЭКРАН НА F4
+        if key == arcade.key.F4:
+            self.set_fullscreen(not self.fullscreen)
 
         if key == arcade.key.ESCAPE:
             self.setup()
@@ -362,3 +408,20 @@ class GameView(arcade.Window):
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = False
             self.update_player_speed()
+
+    def on_resize(self, width: int, height: int):
+        """Вызывается автоматически, когда окно меняет свой размер."""
+        super().on_resize(width, height)
+
+        # Обновляем область вывода графического контекста
+        self.ctx.viewport = (0, 0, width, height)
+
+        # Корректируем внутренние параметры камер под новое разрешение окна
+        if hasattr(self, "camera") and self.camera:
+            self.camera.match_window()
+
+        if hasattr(self, "gui_camera") and self.gui_camera:
+            self.gui_camera.match_window()
+
+        if hasattr(self, "bg_camera") and self.bg_camera:
+            self.bg_camera.match_window()
