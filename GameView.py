@@ -3,6 +3,7 @@ from score_manager import ScoreManager
 import arcade
 from shooters import Turret, Bullet
 from Player import PlayerCharacter
+from GameOverView import GameOverView
 class GameView(arcade.View):
     """ Main application class. """
 
@@ -389,13 +390,27 @@ class GameView(arcade.View):
 
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
-                    # Save new high score to JSON file if current score is higher
-                    self.score_manager.save_highscore(self.score)
-                    # Update loaded high score
-                    self.highscore = self.score_manager.highscore
-                    # Update text on screen
-                    self.highscore_text.text = f"High Score: {self.highscore}"
-                    self.setup()
+
+                    # Save highscore
+                    self.score_manager.save_highscore(
+                        self.score
+                    )
+
+                    self.highscore = (
+                        self.score_manager.highscore
+                    )
+
+                    # Open game over screen
+                    game_over_view = GameOverView(
+                        self.score,
+                        self.highscore
+                    )
+
+                    self.window.show_view(
+                        game_over_view
+                    )
+
+                    return
 
         # --- ЛОГИКА ДВИЖУЩИХСЯ ПЛАТФОРМ (ДВА РЕЖИМА) ---
         try:
@@ -502,10 +517,25 @@ class GameView(arcade.View):
                         # Death check
                         if self.p_hp <= 0:
                             arcade.play_sound(self.sound_hurt)
-                            self.score_manager.save_highscore(self.score)
-                            self.highscore = self.score_manager.highscore
-                            self.setup()
-                            break
+
+                            # Save highscore
+                            self.score_manager.save_highscore(
+                                self.score
+                            )
+
+                            self.highscore = (
+                                self.score_manager.highscore
+                            )
+
+                            # Open game over screen
+                            game_over_view = GameOverView(
+                                self.score,
+                                self.highscore
+                            )
+
+                            self.window.show_view(
+                                game_over_view
+                            )
 
                 # Delete bullets that fly far off-screen
                 if (bullet.right < 0 or bullet.left > self.end_of_map or
@@ -547,13 +577,27 @@ class GameView(arcade.View):
                             arcade.play_sound(self.sound_hit)
                             self.i_frame = 1.5
 
-                            # Если здоровье упало до нуля — перезапуск
                             if self.p_hp <= 0:
                                 arcade.play_sound(self.sound_hurt)
-                                self.score_manager.save_highscore(self.score)
-                                self.highscore = self.score_manager.highscore
-                                self.setup()
-                                break
+
+                                # Save highscore
+                                self.score_manager.save_highscore(
+                                    self.score
+                                )
+
+                                self.highscore = (
+                                    self.score_manager.highscore
+                                )
+
+                                # Open game over screen
+                                game_over_view = GameOverView(
+                                    self.score,
+                                    self.highscore
+                                )
+
+                                self.window.show_view(
+                                    game_over_view
+                                )
 
                 # Состояние 4: Уходят обратно под землю
                 elif spike.state == "falling":
@@ -567,23 +611,35 @@ class GameView(arcade.View):
             pass
         # --- ПРОВЕРКА ПАДЕНИЯ В БЕЗДНУ ---
         if self.player_sprite.center_y < -100:
-            if self.level >= 8:
-                self.level += 1
-                self.p_hp = self.max_hp
-                self.setup()
+            arcade.play_sound(self.sound_hurt)
 
-            else:
-                arcade.play_sound(self.sound_hurt)
-                self.score_manager.save_highscore(self.score)
-                self.highscore = self.score_manager.highscore
-                self.p_hp = self.max_hp
-                self.setup()
+            # Save highscore
+            self.score_manager.save_highscore(
+                self.score
+            )
+
+            self.highscore = (
+                self.score_manager.highscore
+            )
+
+            # Open game over screen
+            game_over_view = GameOverView(
+                self.score,
+                self.highscore
+            )
+
+            self.window.show_view(
+                game_over_view
+            )
+
+            return
 
         # Check if the player got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:
             self.level += 1
             self.reset_score = False
             self.setup()
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         # ПОЛНЫЙ ЭКРАН НА F4
