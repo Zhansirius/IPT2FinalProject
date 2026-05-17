@@ -46,7 +46,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 10
+        self.level = 1
 
         # Variable to hold our texture for our player
         self.player_texture = None
