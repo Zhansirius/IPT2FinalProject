@@ -6,6 +6,8 @@ class MenuView(arcade.View):
 
     def __init__(self):
         super().__init__()
+        self.need_ui_update = False
+        self.ui_camera = arcade.Camera2D()
 
         self.background_color = arcade.csscolor.DARK_BLUE
 
@@ -20,20 +22,27 @@ class MenuView(arcade.View):
         # Hover state
         self.is_hovered = False
 
+        self.update_ui_positions()
+
     def on_show_view(self):
         arcade.set_background_color(self.background_color)
 
     def on_draw(self):
+        self.ui_camera.use()
+
+        if self.need_ui_update:
+            self.update_ui_positions()
+            self.need_ui_update = False
 
         self.clear()
 
         # Dynamic button position (works with fullscreen)
-        button_x = self.window.width / 2
-        button_y = self.window.height / 2
+        button_x = self.button_x
+        button_y = self.button_y
 
         # Dynamic title position
-        title_x = self.window.width / 2
-        title_y = self.window.height / 2 + 180
+        title_x = self.title_x
+        title_y = self.title_y
 
         # Hover color logic
         current_color = (
@@ -129,3 +138,19 @@ class MenuView(arcade.View):
             game_view.setup()
 
             self.window.show_view(game_view)
+
+    def on_resize(self, width, height):
+
+        super().on_resize(width, height)
+
+        self.ui_camera.match_window()
+
+        self.need_ui_update = True
+
+    def update_ui_positions(self):
+
+        self.button_x = self.window.width / 2
+        self.button_y = self.window.height / 2
+
+        self.title_x = self.window.width / 2
+        self.title_y = self.window.height / 2 + 180

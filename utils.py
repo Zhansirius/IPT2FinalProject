@@ -9,6 +9,11 @@ def damage_flash():
         yield 150
         yield 255
 
+# We implemented a custom Python decorator to measure
+# level loading performance.
+# The decorator wraps the setup() function and records
+# its execution time automatically.
+
 def measure_time(func):
     """
     Decorator that measures function execution time.

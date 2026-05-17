@@ -411,7 +411,8 @@ class GameView(arcade.View):
                     # Open game over screen
                     game_over_view = GameOverView(
                         self.score,
-                        self.highscore
+                        self.highscore,
+                        self.level
                     )
 
                     self.window.show_view(
@@ -538,7 +539,8 @@ class GameView(arcade.View):
                             # Open game over screen
                             game_over_view = GameOverView(
                                 self.score,
-                                self.highscore
+                                self.highscore,
+                                self.level
                             )
 
                             self.window.show_view(
@@ -600,7 +602,8 @@ class GameView(arcade.View):
                                 # Open game over screen
                                 game_over_view = GameOverView(
                                     self.score,
-                                    self.highscore
+                                    self.highscore,
+                                    self.level
                                 )
 
                                 self.window.show_view(
@@ -633,7 +636,8 @@ class GameView(arcade.View):
             # Open game over screen
             game_over_view = GameOverView(
                 self.score,
-                self.highscore
+                self.highscore,
+                self.level
             )
 
             self.window.show_view(
