@@ -1,6 +1,7 @@
 from constants import *
 from score_manager import ScoreManager
 import arcade
+from utils import damage_flash
 from shooters import Turret, Bullet
 from Player import PlayerCharacter
 from GameOverView import GameOverView
@@ -14,6 +15,8 @@ class GameView(arcade.View):
         self.p_hp = self.max_hp
         # Invincible frames
         self.i_frame = 0
+        # Generator for damage flashing effect
+        self.flash_generator = damage_flash()
         # Are they looking at right?
         self.facing_right = True
 
@@ -378,7 +381,10 @@ class GameView(arcade.View):
         # --- Invincibility ---
         if self.i_frame > 0:
             self.i_frame -= delta_time
-            self.player_sprite.alpha = 150
+            # using our new generator
+            self.player_sprite.alpha = next(
+                self.flash_generator
+            )
         else:
             self.player_sprite.alpha = 255
             hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.scene["Enemy"])
