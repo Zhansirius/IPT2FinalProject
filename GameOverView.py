@@ -153,8 +153,6 @@ class GameOverView(arcade.View):
         MusicManager.stop_music()
         arcade.set_background_color(arcade.color.BLACK)
 
-        # Импортируем менеджер внутри метода, чтобы избежать кругового импорта
         from music_manager import MusicManager
 
-        # Запускаем музыку смерти через менеджер
         MusicManager.play_music("assets/sounds/death.mp3", loop=True)

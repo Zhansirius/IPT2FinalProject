@@ -678,7 +678,6 @@ class GameView(arcade.View):
             self.update_player_speed()
 
     def on_resize(self, width: int, height: int):
-        """Вызывается автоматически, когда окно меняет свой размер."""
         super().on_resize(width, height)
 
         self.window.ctx.viewport = (0, 0, width, height)
