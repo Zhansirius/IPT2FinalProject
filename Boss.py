@@ -15,7 +15,7 @@ class BossEnemy(arcade.Sprite):
         self.center_y = y
 
         # Характеристики босса
-        self.max_hp = 1
+        self.max_hp = 10
         self.hp = self.max_hp
         self.speed = 5.0
         self.attack_range = 200  # Радиус атаки босса

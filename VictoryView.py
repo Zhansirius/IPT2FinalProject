@@ -1,5 +1,5 @@
 import arcade
-
+from music_manager import MusicManager
 
 class VictoryView(arcade.View):
 
@@ -97,3 +97,9 @@ class VictoryView(arcade.View):
         self.ui_camera.match_window()
 
         self.need_ui_update = True
+
+    def on_show_view(self):
+        from music_manager import MusicManager
+        arcade.set_background_color(self.background_color)
+        # Включаем тему победы
+        MusicManager.play_music("assets/sounds/end.mp3", loop=True)

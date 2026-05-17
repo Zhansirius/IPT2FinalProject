@@ -8,6 +8,8 @@ from Player import PlayerCharacter
 from GameOverView import GameOverView
 from Boss import BossEnemy
 from VictoryView import VictoryView
+from music_manager import MusicManager
+
 
 class GameView(arcade.View):
     """ Main application class. """
@@ -20,6 +22,8 @@ class GameView(arcade.View):
         self.p_hp = self.max_hp
         # Invincible frames
         self.i_frame = 0
+
+        self.game_over_triggered = False
         # Generator for damage flashing effect
         self.flash_generator = damage_flash()
         # Are they looking at right?
@@ -42,7 +46,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 10
+        self.level = 1
 
         # Variable to hold our texture for our player
         self.player_texture = None
@@ -75,7 +79,6 @@ class GameView(arcade.View):
 
         # This variable will store the text for score that we will draw to the screen.
         self.score_text = None
-
         # Load sounds
         self.collect_coin_sound = arcade.load_sound(":resources:sounds/coin1.wav")
         self.jump_sound = arcade.load_sound(":resources:sounds/jump1.wav")
@@ -95,6 +98,20 @@ class GameView(arcade.View):
             }
         }
 
+        # --- УПРАВЛЕНИЕ ФОНОВОЙ МУЗЫКОЙ ---
+        if self.level == 10:
+            bgm_path = "assets/sounds/boss.mp3"
+        elif self.level >= 9:
+            bgm_path = "assets/sounds/red.mp3"
+        elif self.level >= 7:
+            bgm_path = "assets/sounds/blue.mp3"
+        elif self.level >= 5:
+            bgm_path = "assets/sounds/green.mp3"
+        else:
+            bgm_path = "assets/sounds/first.mp3"
+
+        MusicManager.play_music(bgm_path, loop=True)
+
         self.tile_map = arcade.load_tilemap(
             f"assets/lvls/test_lvl{self.level}.tmx",
             scaling=current_tile_scaling,
@@ -103,10 +120,9 @@ class GameView(arcade.View):
         self.scene = arcade.Scene.from_tilemap(self.tile_map)
 
         self.end_of_map = (self.tile_map.width * self.tile_map.tile_width) * self.tile_map.scaling
-
         self.top_of_map = (self.tile_map.height * self.tile_map.tile_height) * self.tile_map.scaling
 
-        self.player_sprite = PlayerCharacter() # Используем наш новый класс
+        self.player_sprite = PlayerCharacter()
         self.scene.add_sprite("Player", self.player_sprite)
 
         if "SpawnPoint" in self.tile_map.object_lists:
@@ -115,7 +131,15 @@ class GameView(arcade.View):
                     self.player_sprite.center_x = obj.shape[0] * TILE_SCALING
                     self.player_sprite.center_y = obj.shape[1] * TILE_SCALING
 
-        # -ЗАГРУЗКА ТУРЕЛЕЙ ИЗ TILED
+        self.hp_text = arcade.Text(
+            f"HP: {self.p_hp}",
+            x=20,
+            y=self.window.height - 40,
+            color=arcade.color.YELLOW,
+            font_size=14,
+            bold=True
+        )
+
         self.turrets_list = []
         try:
             self.scene.add_sprite_list("Bullets")
@@ -127,9 +151,7 @@ class GameView(arcade.View):
                 t_x = obj.shape[0] * current_tile_scaling
                 t_y = obj.shape[1] * current_tile_scaling
 
-                # Читаем твой параметр interval из Tiled
                 interval = float(obj.properties.get("interval", 3.0))
-
                 speed_x = float(obj.properties.get("speed_x", 0.0))
                 speed_y = float(obj.properties.get("speed_y", -5.0))
 
@@ -139,53 +161,40 @@ class GameView(arcade.View):
             enemy_list = self.scene.get_sprite_list("Enemy")
             for enemy in enemy_list:
                 enemy.is_smart = enemy.properties.get("smart", False)
-                # Берем жизни из свойств
                 enemy.health = int(enemy.properties.get("health", 1))
                 enemy.change_x = float(enemy.properties.get("speed", 2))
 
             print(f"Врагов загружено: {len(enemy_list)}")
         except KeyError:
-            # Если слоя "Enemy" нет в карте, Arcade выкинет KeyError
             print("Предупреждение: Слой 'Enemy' не найден в сцене!")
             self.scene.add_sprite_list("Enemy")
 
-        # 6. Физика (базовая настройка) - ЭТОТ БЛОК СТАТИЧНЫХ СТЕН УДАЛИ И ОСТАВЬ ТОЛЬКО НИЖНИЙ
-        # --- ЗАГРУЗКА ДВИЖУЩИХСЯ ПЛАТФОРМ ---
         try:
             moving_platforms = self.scene.get_sprite_list("Moving Platforms")
             for platform in moving_platforms:
-                # Считываем скорость (теперь можно задавать и change_y для вертикальных)
                 platform.change_x = float(platform.properties.get("change_x", 0.0))
                 platform.change_y = float(platform.properties.get("change_y", 0.0))
 
-                # Проверяем, задана ли дистанция движения в Tiled
                 if "move_distance" in platform.properties:
                     platform.move_distance = float(platform.properties.get("move_distance"))
-                    platform.distance_traveled = 0.0  # Счетчик пройденных пикселей
+                    platform.distance_traveled = 0.0
                 else:
-                    platform.move_distance = None  # Значит, эта платформа работает по коллизиям
+                    platform.move_distance = None
         except KeyError:
             print("Предупреждение: Слой 'Moving Platforms' не найден в карте!")
             self.scene.add_sprite_list("Moving Platforms")
             moving_platforms = self.scene.get_sprite_list("Moving Platforms")
 
-        # --- ЗАГРУЗКА ДИНАМИЧЕСКИХ ШИПОВ ---
         try:
             self.spikes_list = self.scene.get_sprite_list("Spikes")
             for spike in self.spikes_list:
-                # Запоминаем верхнюю (активную) точку
                 spike.max_y = spike.center_y
-
-                # Считываем настройки из Tiled
                 spike.hide_time = float(spike.properties.get("hide_time", 2.0))
                 spike.active_time = float(spike.properties.get("active_time", 1.5))
                 pop_height = float(spike.properties.get("pop_height", 32.0))
 
-                # Вычисляем нижнюю (скрытую) точку и прячем шип сразу при старте
                 spike.min_y = spike.max_y - pop_height
                 spike.center_y = spike.min_y
-
-                # Задаем начальное состояние
                 spike.state = "hidden"
                 spike.timer = 0.0
         except KeyError:
@@ -193,23 +202,15 @@ class GameView(arcade.View):
             self.scene.add_sprite_list("Spikes")
             self.spikes_list = self.scene.get_sprite_list("Spikes")
 
-        # Создаем физический движок
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite,
             walls=self.scene["Touchable"],
             platforms=moving_platforms,
             gravity_constant=GRAVITY
         )
-        # Создаем физический движок ОДИН раз, передавая ВСЁ сразу
-        self.physics_engine = arcade.PhysicsEnginePlatformer(
-            self.player_sprite,
-            walls=self.scene["Touchable"],
-            platforms=moving_platforms,
-            gravity_constant=GRAVITY
-        )
-        # Камеры и интерфейс
+
         self.camera = arcade.Camera2D()
-        self.camera.zoom = 1.2  # <--- ДОБАВЛЯЕМ ПРИБЛИЖЕНИЕ (сделайте персонажа крупнее)
+        self.camera.zoom = 1.2
         self.gui_camera = arcade.Camera2D()
         self.gui_camera.match_window()
 
@@ -234,26 +235,19 @@ class GameView(arcade.View):
 
         self.boss_list = arcade.SpriteList()
 
-        # Проверяем, есть ли на карте слой объектов
         if "BossLayer" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["BossLayer"]:
                 if obj.type == "Boss" or obj.class_name == "Boss":
-                    # Создаем босса на координатах из Tiled
                     spawn_x = obj.shape[0]
                     spawn_y = obj.shape[1]
 
-                    boss = BossEnemy(
-                        spawn_x,
-                        spawn_y + 80
-                    )
+                    boss = BossEnemy(spawn_x, spawn_y + 80)
                     self.boss_list.append(boss)
 
-        # ИСПРАВЛЕНИЕ: Привязываем к физике ПЕРВОГО босса из списка (если он есть)
-        # и используем слой "Touchable", как у игрока!
         if len(self.boss_list) > 0:
             self.boss_physics_engine = arcade.PhysicsEnginePlatformer(
-                self.boss_list[0],  # Передаем сам объект босса из списка
-                walls=self.scene["Touchable"],  # Используем правильный слой стен!
+                self.boss_list[0],
+                walls=self.scene["Touchable"],
                 gravity_constant=GRAVITY
             )
         else:
@@ -261,26 +255,16 @@ class GameView(arcade.View):
 
     def on_draw(self):
         """Render the screen."""
-
-        # Clear the screen to the background color
         self.clear()
-
-        # Activate our game camera before drawing game world objects
         self.camera.use()
-
-        # Draw our Scene (draws walls, slimes, player properly)
         self.scene.draw()
-
-        if self.draw_attack_rect:
-            arcade.draw_sprite(self.draw_attack_rect)
 
         self.boss_list.draw()
 
         self.gui_camera.use()
-        # Draw our Score
         self.score_text.draw()
-        # Draw saved high score on the GUI layer
         self.highscore_text.draw()
+        self.hp_text.draw()
 
     def update_player_speed(self):
         self.player_sprite.change_x = 0
@@ -297,18 +281,15 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time):
         """Movement and Game Logic"""
+        self.hp_text.text = f"HP: {self.p_hp}"
         self.draw_attack_rect = None
 
-        # Move the player using our physics engine
         self.physics_engine.update()
-
         self.bg_camera.position = (self.camera.position[0] * 0.2, self.camera.position[1] * 0.2)
 
-        # Передаем статус "на земле" в анимацию
         is_on_ground = self.physics_engine.can_jump()
         self.player_sprite.update_animation(is_on_ground, delta_time)
 
-        # --- ЛОГИКА НАНЕСЕНИЯ УРОНА (ДВОЙНОЙ УДАР) ---
         if self.player_sprite.is_attacking:
             first_hit_frame = 3
             second_hit_frame = 9
@@ -343,50 +324,28 @@ class GameView(arcade.View):
                             enemy.remove_from_sprite_lists()
                             self.score += 50
                             self.score_text.text = f"Score: {self.score}"
-                # --- УДАР ПО БОССУ ---
-                hit_bosses = arcade.check_for_collision_with_list(
-                    attack_hitbox,
-                    self.boss_list
-                )
 
+                hit_bosses = arcade.check_for_collision_with_list(attack_hitbox, self.boss_list)
                 for boss in hit_bosses:
-
-                    # Проверка неуязвимости
-                    # Полная защита от повторных ударов
                     if boss.is_invincible or boss.state in ["HURT", "DEAD"]:
                         continue
 
                     boss.hp -= 1
-
                     arcade.play_sound(self.sound_hit1)
-
                     print("Boss HP:", boss.hp)
 
-                    # Прерываем атаку
                     boss.change_x = 0
-
-                    # Включаем состояние получения урона
                     boss.state = "HURT"
                     boss.cur_texture = 0
-
-                    # Неуязвимость
                     boss.is_invincible = True
                     boss.invincible_timer = 0.0
 
-                    # Смерть босса
                     if boss.hp <= 0:
                         boss.state = "DEAD"
                         boss.cur_texture = 0
+                        self.score_manager.save_highscore(self.score)
+                        self.highscore = self.score_manager.highscore
 
-                        # Сохраняем рекорд
-                        self.score_manager.save_highscore(
-                            self.score
-                        )
-
-                        self.highscore = (
-                            self.score_manager.highscore
-                        )
-        # --- УМНОЕ ЦЕНТРИРОВАНИЕ И ОГРАНИЧЕНИЕ КАМЕРЫ ---
         zoom = self.camera.zoom
         visible_width = self.width / zoom
         visible_height = self.height / zoom
@@ -414,7 +373,6 @@ class GameView(arcade.View):
 
         self.camera.position = (camera_x, camera_y)
 
-        # ENEMY MOVEMENT LOGIC
         try:
             enemy_list = self.scene.get_sprite_list("Enemy")
             walls = self.scene["Touchable"]
@@ -450,13 +408,9 @@ class GameView(arcade.View):
         except KeyError:
             pass
 
-        # --- Invincibility ---
         if self.i_frame > 0:
             self.i_frame -= delta_time
-            # using our new generator
-            self.player_sprite.alpha = next(
-                self.flash_generator
-            )
+            self.player_sprite.alpha = next(self.flash_generator)
         else:
             self.player_sprite.alpha = 255
             hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.scene["Enemy"])
@@ -468,61 +422,38 @@ class GameView(arcade.View):
 
                 if self.p_hp <= 0:
                     arcade.play_sound(self.sound_hurt)
-
-                    # Save highscore
-                    self.score_manager.save_highscore(
-                        self.score
-                    )
-
-                    self.highscore = (
-                        self.score_manager.highscore
-                    )
-
-                    # Open game over screen
-                    game_over_view = GameOverView(
-                        self.score,
-                        self.highscore,
-                        self.level
-                    )
-
-                    self.window.show_view(
-                        game_over_view
-                    )
-
+                    self.score_manager.save_highscore(self.score)
+                    self.highscore = self.score_manager.highscore
+                    self.game_over_triggered = True
+                    MusicManager.stop_music()
+                    game_over_view = GameOverView(self.score, self.highscore, self.level)
+                    self.window.show_view(game_over_view)
                     return
 
-        # --- ЛОГИКА ДВИЖУЩИХСЯ ПЛАТФОРМ (ДВА РЕЖИМА) ---
         try:
             moving_platforms = self.scene.get_sprite_list("Moving Platforms")
             walls = self.scene["Touchable"]
 
-            # Разделяем платформы на две группы по их поведению
             distance_platforms = [p for p in moving_platforms if p.move_distance is not None]
             collision_platforms = [p for p in moving_platforms if p.move_distance is None]
 
-            # === РЕЖИМ 1: РАЗВОР ОТ ПО ДИСТАНЦИИ (Новый код) ===
             for platform in distance_platforms:
-                # Смещаем по X и считаем расстояние
                 if platform.change_x != 0:
                     platform.center_x += platform.change_x
                     platform.distance_traveled += abs(platform.change_x)
 
-                # Смещаем по Y и считаем расстояние
                 if platform.change_y != 0:
                     platform.center_y += platform.change_y
                     platform.distance_traveled += abs(platform.change_y)
 
-                # Если прошли нужную дистанцию — разворачиваемся
                 if platform.distance_traveled >= platform.move_distance:
                     if platform.change_x != 0:
                         platform.change_x *= -1
                     if platform.change_y != 0:
                         platform.change_y *= -1
-                    platform.distance_traveled = 0.0  # Сбрасываем счетчик для обратного пути
+                    platform.distance_traveled = 0.0
 
-            # === РЕЖИМ 2: РАЗВОР ОТ ОТ СТЕН (Твой прошлый рабочий код с platform_id) ===
             if collision_platforms:
-                # 1. Двигаем вперед
                 for platform in collision_platforms:
                     if platform.change_x != 0:
                         platform.center_x += platform.change_x
@@ -532,7 +463,6 @@ class GameView(arcade.View):
                 broken_platforms_x = set()
                 broken_platforms_y = set()
 
-                # 2. Проверяем коллизии со стенами Touchable
                 for platform in collision_platforms:
                     if arcade.check_for_collision_with_list(platform, walls):
                         pid = platform.properties.get("platform_id", 0)
@@ -541,7 +471,6 @@ class GameView(arcade.View):
                         if platform.change_y != 0:
                             broken_platforms_y.add(pid)
 
-                # 3. Синхронно разворачиваем группу
                 for platform in collision_platforms:
                     pid = platform.properties.get("platform_id", 0)
                     if pid in broken_platforms_x:
@@ -554,38 +483,25 @@ class GameView(arcade.View):
         except KeyError:
             pass
 
-        # --- TURRET AND BULLET LOGIC ---
         try:
-            # 1. Turret Timers (Обычная перезарядка)
             if hasattr(self, "turrets_list"):
                 for turret in self.turrets_list:
                     turret.timer += delta_time
-
-                    # Если таймер накопил достаточно времени для выстрела (interval)
                     if turret.timer >= turret.interval:
-                        # Стреляем
                         new_bullet = Bullet(turret.center_x, turret.center_y, turret.speed_x, turret.speed_y)
                         self.scene["Bullets"].append(new_bullet)
-
-                        # Сбрасываем таймер в ноль, чтобы начать отсчет до следующего выстрела
                         turret.timer = 0.0
 
-            # 2. Bullet Movement and Collisions
-            # ИСПРАВЛЕНО: Безопасно получаем список пуль через встроенный метод get_sprite_list()
             bullets_list = self.scene.get_sprite_list("Bullets")
-
-            # Двигаем пули
             bullets_list.update()
 
             walls = self.scene["Touchable"]
-            for bullet in list(bullets_list):  # Копия через list() для безопасного удаления
+            for bullet in list(bullets_list):
 
-                # Check: Did the bullet hit a wall?
                 if arcade.check_for_collision_with_list(bullet, walls):
                     bullet.remove_from_sprite_lists()
                     continue
 
-                # Check: Did the bullet hit the player?
                 if arcade.check_for_collision(bullet, self.player_sprite):
                     if self.i_frame <= 0:
                         self.p_hp -= 1
@@ -593,96 +509,60 @@ class GameView(arcade.View):
                         self.i_frame = 1.5
                         bullet.remove_from_sprite_lists()
 
-                        # Death check
                         if self.p_hp <= 0:
                             arcade.play_sound(self.sound_hurt)
+                            self.score_manager.save_highscore(self.score)
+                            self.highscore = self.score_manager.highscore
+                            self.game_over_triggered = True
+                            MusicManager.stop_music()
+                            game_over_view = GameOverView(self.score, self.highscore, self.level)
+                            self.window.show_view(game_over_view)
 
-                            # Save highscore
-                            self.score_manager.save_highscore(
-                                self.score
-                            )
-
-                            self.highscore = (
-                                self.score_manager.highscore
-                            )
-
-                            # Open game over screen
-                            game_over_view = GameOverView(
-                                self.score,
-                                self.highscore,
-                                self.level
-                            )
-
-                            self.window.show_view(
-                                game_over_view
-                            )
-
-                # Delete bullets that fly far off-screen
                 if (bullet.right < 0 or bullet.left > self.end_of_map or
                         bullet.top < 0 or bullet.bottom > self.top_of_map):
                     bullet.remove_from_sprite_lists()
 
         except KeyError:
-            # Если слоя "Bullets" ещё нет в сцене, ничего не делаем
             pass
-        # --- ЛОГИКА РАБОТЫ ШИПОВ (КОНЕЧНЫЙ АВТОМАТ) ---
+
         try:
             for spike in self.spikes_list:
                 spike.timer += delta_time
 
-                # Состояние 1: Сидят под землей и ждут
                 if spike.state == "hidden":
                     if spike.timer >= spike.hide_time:
                         spike.state = "rising"
                         spike.timer = 0.0
 
-                # Состояние 2: Вылезают вверх
                 elif spike.state == "rising":
-                    spike.center_y += 4.0  # Скорость вылета шипов
+                    spike.center_y += 4.0
                     if spike.center_y >= spike.max_y:
                         spike.center_y = spike.max_y
                         spike.state = "active"
                         spike.timer = 0.0
 
-                # Состояние 3: Полностью вылезли, опасны!
                 elif spike.state == "active":
                     if spike.timer >= spike.active_time:
                         spike.state = "falling"
                         spike.timer = 0.0
 
-                    # НАНОСИМ УРОН: Только если шип активен и игрок наступил на хитбокс кончика
                     if arcade.check_for_collision(self.player_sprite, spike):
-                        if self.i_frame <= 0:  # Проверка фреймов неуязвимости
+                        if self.i_frame <= 0:
                             self.p_hp -= 1
                             arcade.play_sound(self.sound_hit)
                             self.i_frame = 1.5
 
                             if self.p_hp <= 0:
                                 arcade.play_sound(self.sound_hurt)
+                                self.score_manager.save_highscore(self.score)
+                                self.highscore = self.score_manager.highscore
+                                self.game_over_triggered = True
+                                MusicManager.stop_music()
+                                game_over_view = GameOverView(self.score, self.highscore, self.level)
+                                self.window.show_view(game_over_view)
 
-                                # Save highscore
-                                self.score_manager.save_highscore(
-                                    self.score
-                                )
-
-                                self.highscore = (
-                                    self.score_manager.highscore
-                                )
-
-                                # Open game over screen
-                                game_over_view = GameOverView(
-                                    self.score,
-                                    self.highscore,
-                                    self.level
-                                )
-
-                                self.window.show_view(
-                                    game_over_view
-                                )
-
-                # Состояние 4: Уходят обратно под землю
                 elif spike.state == "falling":
-                    spike.center_y -= 4.0  # Скорость ухода
+                    spike.center_y -= 4.0
                     if spike.center_y <= spike.min_y:
                         spike.center_y = spike.min_y
                         spike.state = "hidden"
@@ -690,121 +570,71 @@ class GameView(arcade.View):
 
         except KeyError:
             pass
-        # --- ПРОВЕРКА ПАДЕНИЯ В БЕЗДНУ ---
+
         if self.player_sprite.center_y < -100:
             if self.level >= 8:
-                # Если уровень 8 и выше — не умираем, а переходим на следующий
                 self.level += 1
-                self.reset_score = False  # Сохраняем очки при переходе
-                self.setup()  # Загружаем новую карту
-                return  # Выходим из update, чтобы не пошёл код ниже
+                self.reset_score = False
+                self.setup()
+                return
             else:
-                # Обычная логика смерти для уровней ниже 8-го
                 arcade.play_sound(self.sound_hurt)
-
-                # Save highscore
-                self.score_manager.save_highscore(
-                    self.score
-                )
-
-                self.highscore = (
-                    self.score_manager.highscore
-                )
-
-                # Open game over screen
-                game_over_view = GameOverView(
-                    self.score,
-                    self.highscore,
-                    self.level
-                )
-
-                self.window.show_view(
-                    game_over_view
-                )
-
+                self.score_manager.save_highscore(self.score)
+                self.highscore = self.score_manager.highscore
+                self.game_over_triggered = True
+                MusicManager.stop_music()
+                game_over_view = GameOverView(self.score, self.highscore, self.level)
+                self.window.show_view(game_over_view)
                 return
 
-        # Check if the player got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:
             self.level += 1
             self.reset_score = False
             self.setup()
-        # --- ЛОГИКА И ОБНОВЛЕНИЕ БОССА ---
+
         if self.boss_physics_engine is not None:
             for boss in self.boss_list:
-                # Мы убрали привязку по Y, босс больше не будет летать!
                 boss.update_boss_ai(self.player_sprite)
                 boss.update_animation(delta_time)
                 if boss.dead_finished:
-                    victory_view = VictoryView(
-                        self.score,
-                        self.highscore
-                    )
-
+                    victory_view = VictoryView(self.score, self.highscore)
                     self.window.show_view(victory_view)
-
                     return
 
-            # Движок сам применит гравитацию и поставит босса на Touchable пол
             self.boss_physics_engine.update()
 
-        # --- АТАКА БОССА ПО ИГРОКУ ---
         for boss in self.boss_list:
-
             attack_hitbox = boss.get_attack_hitbox()
-
             if attack_hitbox:
-
-                # DEBUG ОТРИСОВКА
                 self.draw_attack_rect = attack_hitbox
-
-                # Урон игроку
-                if arcade.check_for_collision(
-                        attack_hitbox,
-                        self.player_sprite
-                ):
-
+                if arcade.check_for_collision(attack_hitbox, self.player_sprite):
                     if self.i_frame <= 0:
                         self.p_hp -= 1
                         self.i_frame = 1.5
-
                         arcade.play_sound(self.sound_hit)
 
-        # --- КОНТАКТНЫЙ УРОН ---
-        if arcade.check_for_collision(boss, self.player_sprite):
-
-            if self.i_frame <= 0 and boss.state != "DEAD":
-
-                self.p_hp -= 1
-                self.i_frame = 1.5
-
-                arcade.play_sound(self.sound_hit)
-
+            if arcade.check_for_collision(boss, self.player_sprite):
+                if self.i_frame <= 0 and boss.state != "DEAD":
+                    self.p_hp -= 1
+                    self.i_frame = 1.5
+                    arcade.play_sound(self.sound_hit)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
-        # ПОЛНЫЙ ЭКРАН НА F4
         if key == arcade.key.F4:
-            # Toggle fullscreen mode
-            self.window.set_fullscreen(
-                not self.window.fullscreen
-            )
-
-            # Update cameras to new window size
-            self.camera.match_window()
-            self.gui_camera.match_window()
-            self.bg_camera.match_window()
+            self.window.set_fullscreen(not self.window.fullscreen)
+            # УДАЛЕНО: Вызовы match_window() отсюда убраны.
+            # Метод on_resize() сделает всё автоматически и вовремя.
 
         if key == arcade.key.ESCAPE:
+            MusicManager.stop_music()
             self.setup()
 
-        # Jump
         if key == arcade.key.UP or key == arcade.key.W:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
                 arcade.play_sound(self.jump_sound)
 
-        # Moveset and turning sides
         if key == arcade.key.LEFT or key == arcade.key.A:
             self.left_pressed = True
             self.update_player_speed()
@@ -812,9 +642,7 @@ class GameView(arcade.View):
             self.right_pressed = True
             self.update_player_speed()
 
-        # Attack
         if key == arcade.key.SPACE:
-            # Если уже атакуем — выходим, не даем сбросить анимацию
             if self.player_sprite.is_attacking:
                 return
 
@@ -822,11 +650,10 @@ class GameView(arcade.View):
             self.player_sprite.is_attacking = True
             self.player_sprite.cur_texture = 0
             self.player_sprite.hit_1_done = False
-            self.player_sprite.hit_2_done = False  # Готовим персонажа нанести урон
+            self.player_sprite.hit_2_done = False
 
     def on_key_release(self, key, modifiers):
         """Called whenever a key is released."""
-
         if key == arcade.key.LEFT or key == arcade.key.A:
             self.left_pressed = False
             self.update_player_speed()
@@ -838,10 +665,8 @@ class GameView(arcade.View):
         """Вызывается автоматически, когда окно меняет свой размер."""
         super().on_resize(width, height)
 
-        # Обновляем область вывода графического контекста
         self.window.ctx.viewport = (0, 0, width, height)
 
-        # Корректируем внутренние параметры камер под новое разрешение окна
         if hasattr(self, "camera") and self.camera:
             self.camera.match_window()
 
@@ -851,9 +676,12 @@ class GameView(arcade.View):
         if hasattr(self, "bg_camera") and self.bg_camera:
             self.bg_camera.match_window()
 
-        # Reposition GUI text after window resize
+        # ИСПРАВЛЕНО: Теперь отступы идентичны тем, что заданы в методе setup()
+        self.hp_text.x = 20
+        self.hp_text.y = height - 50
+
         self.score_text.x = 20
-        self.score_text.y = height - 100
+        self.score_text.y = height - 90
 
         self.highscore_text.x = 20
         self.highscore_text.y = height - 130

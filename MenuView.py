@@ -1,7 +1,7 @@
 import arcade
 from GameView import GameView
 from constants import *
-
+from music_manager import MusicManager
 class MenuView(arcade.View):
 
     def __init__(self):
@@ -50,6 +50,7 @@ class MenuView(arcade.View):
         )
 
         if self.music_player is None:
+            MusicManager.stop_music()
             self.music_player = self.menu_music.play(
                 volume=0.5,
                 loop=True

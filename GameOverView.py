@@ -1,4 +1,5 @@
 import arcade
+from music_manager import MusicManager
 
 class GameOverView(arcade.View):
 
@@ -146,3 +147,14 @@ class GameOverView(arcade.View):
             self.update_text_positions()
 
             self.need_ui_update = False
+
+    def on_show_view(self):
+        from music_manager import MusicManager
+        MusicManager.stop_music()
+        arcade.set_background_color(arcade.color.BLACK)
+
+        # Импортируем менеджер внутри метода, чтобы избежать кругового импорта
+        from music_manager import MusicManager
+
+        # Запускаем музыку смерти через менеджер
+        MusicManager.play_music("assets/sounds/death.mp3", loop=True)
