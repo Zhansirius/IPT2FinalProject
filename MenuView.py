@@ -7,9 +7,21 @@ class MenuView(arcade.View):
     def __init__(self):
         super().__init__()
         self.need_ui_update = False
-        self.ui_camera = arcade.Camera2D()
 
         self.background_color = arcade.csscolor.DARK_BLUE
+        # Animated background frames
+        self.background_frames = []
+
+        for i in range(1, 8):
+            texture = arcade.load_texture(
+                f"assets/MainMenuBackground/{i}cadr.png"
+            )
+
+            self.background_frames.append(texture)
+
+        # Animation state
+        self.current_frame = 0
+        self.animation_timer = 0
 
         # Button settings
         self.button_width = 300
@@ -27,14 +39,45 @@ class MenuView(arcade.View):
     def on_show_view(self):
         arcade.set_background_color(self.background_color)
 
-    def on_draw(self):
-        self.ui_camera.use()
+    def on_update(self, delta_time):
 
+        # Animation timer
+        self.animation_timer += delta_time
+
+        # Change frame every 0.12 seconds
+        if self.animation_timer >= 0.12:
+
+            self.current_frame += 1
+
+            # Loop animation
+            if self.current_frame >= len(self.background_frames):
+                self.current_frame = 0
+
+            self.animation_timer = 0
+
+    def on_draw(self):
         if self.need_ui_update:
             self.update_ui_positions()
             self.need_ui_update = False
 
         self.clear()
+
+        # Use default window coordinates
+        self.window.default_camera.use()
+
+        current_texture = self.background_frames[
+            self.current_frame
+        ]
+
+        arcade.draw_texture_rect(
+            current_texture,
+            arcade.LRBT(
+                0,
+                self.window.width,
+                0,
+                self.window.height
+            )
+        )
 
         # Dynamic button position (works with fullscreen)
         button_x = self.button_x
@@ -142,8 +185,6 @@ class MenuView(arcade.View):
     def on_resize(self, width, height):
 
         super().on_resize(width, height)
-
-        self.ui_camera.match_window()
 
         self.need_ui_update = True
 
