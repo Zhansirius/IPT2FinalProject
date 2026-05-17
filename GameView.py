@@ -1,4 +1,5 @@
 from constants import *
+from utils import damage_flash, measure_time
 from score_manager import ScoreManager
 import arcade
 from utils import damage_flash
@@ -75,6 +76,7 @@ class GameView(arcade.View):
         self.collect_coin_sound = arcade.load_sound(":resources:sounds/coin1.wav")
         self.jump_sound = arcade.load_sound(":resources:sounds/jump1.wav")
 
+    @measure_time
     def setup(self):
 
         # 1. Определяем индивидуальный масштаб для каждого уровня
