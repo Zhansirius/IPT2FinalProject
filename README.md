@@ -5,11 +5,11 @@
 <br>
 <br>
 This project is a 2D Game based Platformer using Python Arcade library.
-The project includes: multiple levels, saving system, main menu + play & game over menu, main character, enemies, traps, bullets, moving platforms, boss, ending, figthing system and so on.
+The project includes: multiple levels, saving system, main menu + play & game over menu, main character, enemies, traps, bullets, moving platforms, boss, ending, figthing system and so on. Also we used Gemini AI generated slides for main menu animation only!
 <br>
 ## Features:
 
-- Start Menu
+- Start Menu + animation + music
 - Game Over Screen
 - Multiple Levels
 - Enemy AI
