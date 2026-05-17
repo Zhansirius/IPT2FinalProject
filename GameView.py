@@ -1,6 +1,7 @@
 from constants import *
 from score_manager import ScoreManager
 import arcade
+from shooters import Turret, Bullet
 from Player import PlayerCharacter
 class GameView(arcade.View):
     """ Main application class. """
@@ -8,7 +9,8 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Player's hp
-        self.p_hp = 5
+        self.max_hp = 5
+        self.p_hp = self.max_hp
         # Invincible frames
         self.i_frame = 0
         # Are they looking at right?
@@ -31,7 +33,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 1
+        self.level = 8
 
         # Variable to hold our texture for our player
         self.player_texture = None
@@ -103,13 +105,31 @@ class GameView(arcade.View):
                     self.player_sprite.center_x = obj.shape[0] * TILE_SCALING
                     self.player_sprite.center_y = obj.shape[1] * TILE_SCALING
 
+        # -ЗАГРУЗКА ТУРЕЛЕЙ ИЗ TILED
+        self.turrets_list = []
+        try:
+            self.scene.add_sprite_list("Bullets")
+        except KeyError:
+            pass
+
+        if "Shooters" in self.tile_map.object_lists:
+            for obj in self.tile_map.object_lists["Shooters"]:
+                t_x = obj.shape[0] * current_tile_scaling
+                t_y = obj.shape[1] * current_tile_scaling
+
+                # Читаем твой параметр interval из Tiled
+                interval = float(obj.properties.get("interval", 3.0))
+
+                speed_x = float(obj.properties.get("speed_x", 0.0))
+                speed_y = float(obj.properties.get("speed_y", -5.0))
+
+                turret = Turret(t_x, t_y, speed_x, speed_y, interval)
+                self.turrets_list.append(turret)
         try:
             enemy_list = self.scene.get_sprite_list("Enemy")
-
-
             for enemy in enemy_list:
                 enemy.is_smart = enemy.properties.get("smart", False)
-                # Берем жизни из свойств (из твоего Tiled)
+                # Берем жизни из свойств
                 enemy.health = int(enemy.properties.get("health", 1))
                 enemy.change_x = float(enemy.properties.get("speed", 2))
 
@@ -185,7 +205,7 @@ class GameView(arcade.View):
 
         if self.reset_score:
             self.score = 0
-            self.p_hp = 5
+            self.p_hp = self.max_hp
         self.reset_score = True
         self.i_frame = 0
 
@@ -440,6 +460,61 @@ class GameView(arcade.View):
         except KeyError:
             pass
 
+        # --- TURRET AND BULLET LOGIC ---
+        try:
+            # 1. Turret Timers (Обычная перезарядка)
+            if hasattr(self, "turrets_list"):
+                for turret in self.turrets_list:
+                    turret.timer += delta_time
+
+                    # Если таймер накопил достаточно времени для выстрела (interval)
+                    if turret.timer >= turret.interval:
+                        # Стреляем
+                        new_bullet = Bullet(turret.center_x, turret.center_y, turret.speed_x, turret.speed_y)
+                        self.scene["Bullets"].append(new_bullet)
+
+                        # Сбрасываем таймер в ноль, чтобы начать отсчет до следующего выстрела
+                        turret.timer = 0.0
+
+            # 2. Bullet Movement and Collisions
+            # ИСПРАВЛЕНО: Безопасно получаем список пуль через встроенный метод get_sprite_list()
+            bullets_list = self.scene.get_sprite_list("Bullets")
+
+            # Двигаем пули
+            bullets_list.update()
+
+            walls = self.scene["Touchable"]
+            for bullet in list(bullets_list):  # Копия через list() для безопасного удаления
+
+                # Check: Did the bullet hit a wall?
+                if arcade.check_for_collision_with_list(bullet, walls):
+                    bullet.remove_from_sprite_lists()
+                    continue
+
+                # Check: Did the bullet hit the player?
+                if arcade.check_for_collision(bullet, self.player_sprite):
+                    if self.i_frame <= 0:
+                        self.p_hp -= 1
+                        arcade.play_sound(self.sound_hit)
+                        self.i_frame = 1.5
+                        bullet.remove_from_sprite_lists()
+
+                        # Death check
+                        if self.p_hp <= 0:
+                            arcade.play_sound(self.sound_hurt)
+                            self.score_manager.save_highscore(self.score)
+                            self.highscore = self.score_manager.highscore
+                            self.setup()
+                            break
+
+                # Delete bullets that fly far off-screen
+                if (bullet.right < 0 or bullet.left > self.end_of_map or
+                        bullet.top < 0 or bullet.bottom > self.top_of_map):
+                    bullet.remove_from_sprite_lists()
+
+        except KeyError:
+            # Если слоя "Bullets" ещё нет в сцене, ничего не делаем
+            pass
         # --- ЛОГИКА РАБОТЫ ШИПОВ (КОНЕЧНЫЙ АВТОМАТ) ---
         try:
             for spike in self.spikes_list:
@@ -490,10 +565,19 @@ class GameView(arcade.View):
 
         except KeyError:
             pass
-        # Check if player fall to the abyss
+        # --- ПРОВЕРКА ПАДЕНИЯ В БЕЗДНУ ---
         if self.player_sprite.center_y < -100:
-            self.reset_score = True
-            self.setup()
+            if self.level >= 8:
+                self.level += 1
+                self.p_hp = self.max_hp
+                self.setup()
+
+            else:
+                arcade.play_sound(self.sound_hurt)
+                self.score_manager.save_highscore(self.score)
+                self.highscore = self.score_manager.highscore
+                self.p_hp = self.max_hp
+                self.setup()
 
         # Check if the player got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:

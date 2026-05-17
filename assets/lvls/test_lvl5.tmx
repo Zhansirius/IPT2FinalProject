@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="40" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="5" nextobjectid="3">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="40" height="60" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="42">
  <tileset firstgid="1" source="../tsx_tilesets/dungeon_green.tsx"/>
  <tileset firstgid="241" source="../tsx_tilesets/torches.tsx"/>
+ <tileset firstgid="549" source="../tsx_tilesets/Robot Tileset SELL.tsx"/>
+ <tileset firstgid="613" source="../tsx_tilesets/wall_turret.tsx"/>
  <layer id="1" name="Tile Layer 1" width="40" height="60">
   <data encoding="csv">
 90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,
@@ -73,9 +75,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,263,264,265,266,267,268,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,285,286,287,288,289,290,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,307,308,309,310,311,312,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,329,330,331,332,333,334,0,0,0,0,0,0,103,104,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,351,352,353,354,355,356,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,103,104,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,329,330,331,332,333,334,0,0,0,0,0,0,103,104,2147484261,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,351,352,353,354,355,356,0,0,0,0,0,0,83,84,2147484261,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,103,104,2147484261,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,21,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,48,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -87,14 +89,14 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,307,308,309,310,311,312,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,329,330,331,332,333,334,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,103,104,0,0,0,0,0,0,0,351,352,353,354,355,356,0,0,
-0,0,0,0,47,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,103,104,0,0,0,0,0,0,0,0,0,0,0,21,22,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,22,0,23,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,613,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,
+0,0,0,0,613,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,103,104,0,0,0,0,0,0,0,0,0,0,0,21,22,0,0,
+0,0,0,0,613,0,0,0,0,0,0,0,0,0,21,22,0,23,24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,83,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,103,104,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,83,84,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,103,104,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,2684355173,2684355173,2684355173,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,11,12,13,14,15,16,0,0,0,0,0,0,0,0,0,0,59,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,31,32,33,34,35,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -113,7 +115,7 @@
 0,0,0,307,308,309,310,311,312,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,329,330,331,332,333,334,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,351,352,353,354,355,356,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,211,212,0,0,0,0,83,84,0,47,48,83,84,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,211,212,0,0,0,0,83,84,2684355173,2684355173,2684355173,83,84,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,103,104,0,231,232,0,0,0,0,103,104,0,0,0,103,104,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,0,83,84,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,11,12,13,14,15,16,0,0,0,0,103,104,0,0,0,241,242,243,244,245,246,0,0,0,103,104,0,0,0,211,212,0,0,0,47,48,0,
@@ -130,6 +132,295 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup id="5" name="Spikes">
+  <object id="3" gid="571" x="512" y="288" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="4" gid="571" x="480" y="288" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="5" gid="571" x="448" y="288" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="6" gid="571" x="1088" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="7" gid="571" x="1056" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="8" gid="571" x="1024" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="9" gid="571" x="1184" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="10" gid="571" x="1152" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="11" gid="571" x="1120" y="672" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="12" gid="571" x="544" y="704" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="13" gid="571" x="512" y="704" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="14" gid="571" x="480" y="704" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="15" gid="571" x="1184" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="16" gid="571" x="1152" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="17" gid="571" x="1120" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="18" gid="571" x="1088" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="19" gid="571" x="1056" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="20" gid="571" x="1024" y="1280" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="0.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="21" gid="571" x="1152" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="22" gid="571" x="1120" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="23" gid="571" x="1088" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="24" gid="571" x="928" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="25" gid="571" x="896" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="26" gid="571" x="864" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="27" gid="571" x="736" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="28" gid="571" x="704" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="29" gid="571" x="672" y="1792" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="Shooters">
+  <object id="30" x="819.91" y="180.318">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="-5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" x="820.77" y="212.727">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="-5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" x="821.5" y="245.5">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="-5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" x="170.41" y="624.818">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" x="171.27" y="657.227">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" x="172" y="690">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="5"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" x="400.16" y="877.318">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" x="433.02" y="877.977">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" x="465.75" y="879.25">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" x="783.91" y="1488.82">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-8"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" x="815.77" y="1490.23">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-8"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="41" x="850" y="1491">
+   <properties>
+    <property name="interval" type="float" value="1"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-8"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
  <layer id="2" name="Touchable" width="40" height="60">
   <data encoding="csv">
 76,152,153,154,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,155,51,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,
