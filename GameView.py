@@ -6,11 +6,15 @@ from utils import damage_flash
 from shooters import Turret, Bullet
 from Player import PlayerCharacter
 from GameOverView import GameOverView
+from Boss import BossEnemy
+from VictoryView import VictoryView
+
 class GameView(arcade.View):
     """ Main application class. """
 
     def __init__(self):
         super().__init__()
+        self.boss_list = None
         # Player's hp
         self.max_hp = 5
         self.p_hp = self.max_hp
@@ -38,7 +42,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 1
+        self.level = 10
 
         # Variable to hold our texture for our player
         self.player_texture = None
@@ -228,6 +232,33 @@ class GameView(arcade.View):
             y=self.window.height - 120
         )
 
+        self.boss_list = arcade.SpriteList()
+
+        # Проверяем, есть ли на карте слой объектов
+        if "BossLayer" in self.tile_map.object_lists:
+            for obj in self.tile_map.object_lists["BossLayer"]:
+                if obj.type == "Boss" or obj.class_name == "Boss":
+                    # Создаем босса на координатах из Tiled
+                    spawn_x = obj.shape[0]
+                    spawn_y = obj.shape[1]
+
+                    boss = BossEnemy(
+                        spawn_x,
+                        spawn_y + 80
+                    )
+                    self.boss_list.append(boss)
+
+        # ИСПРАВЛЕНИЕ: Привязываем к физике ПЕРВОГО босса из списка (если он есть)
+        # и используем слой "Touchable", как у игрока!
+        if len(self.boss_list) > 0:
+            self.boss_physics_engine = arcade.PhysicsEnginePlatformer(
+                self.boss_list[0],  # Передаем сам объект босса из списка
+                walls=self.scene["Touchable"],  # Используем правильный слой стен!
+                gravity_constant=GRAVITY
+            )
+        else:
+            self.boss_physics_engine = None
+
     def on_draw(self):
         """Render the screen."""
 
@@ -240,18 +271,14 @@ class GameView(arcade.View):
         # Draw our Scene (draws walls, slimes, player properly)
         self.scene.draw()
 
-
         if self.draw_attack_rect:
             arcade.draw_sprite(self.draw_attack_rect)
-            # Убираем его, чтобы он не "завис" навсегда
-            self.draw_attack_rect = None
+
+        self.boss_list.draw()
 
         self.gui_camera.use()
-
         # Draw our Score
         self.score_text.draw()
-
-
         # Draw saved high score on the GUI layer
         self.highscore_text.draw()
 
@@ -270,6 +297,7 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time):
         """Movement and Game Logic"""
+        self.draw_attack_rect = None
 
         # Move the player using our physics engine
         self.physics_engine.update()
@@ -315,7 +343,49 @@ class GameView(arcade.View):
                             enemy.remove_from_sprite_lists()
                             self.score += 50
                             self.score_text.text = f"Score: {self.score}"
+                # --- УДАР ПО БОССУ ---
+                hit_bosses = arcade.check_for_collision_with_list(
+                    attack_hitbox,
+                    self.boss_list
+                )
 
+                for boss in hit_bosses:
+
+                    # Проверка неуязвимости
+                    # Полная защита от повторных ударов
+                    if boss.is_invincible or boss.state in ["HURT", "DEAD"]:
+                        continue
+
+                    boss.hp -= 1
+
+                    arcade.play_sound(self.sound_hit1)
+
+                    print("Boss HP:", boss.hp)
+
+                    # Прерываем атаку
+                    boss.change_x = 0
+
+                    # Включаем состояние получения урона
+                    boss.state = "HURT"
+                    boss.cur_texture = 0
+
+                    # Неуязвимость
+                    boss.is_invincible = True
+                    boss.invincible_timer = 0.0
+
+                    # Смерть босса
+                    if boss.hp <= 0:
+                        boss.state = "DEAD"
+                        boss.cur_texture = 0
+
+                        # Сохраняем рекорд
+                        self.score_manager.save_highscore(
+                            self.score
+                        )
+
+                        self.highscore = (
+                            self.score_manager.highscore
+                        )
         # --- УМНОЕ ЦЕНТРИРОВАНИЕ И ОГРАНИЧЕНИЕ КАМЕРЫ ---
         zoom = self.camera.zoom
         visible_width = self.width / zoom
@@ -622,35 +692,94 @@ class GameView(arcade.View):
             pass
         # --- ПРОВЕРКА ПАДЕНИЯ В БЕЗДНУ ---
         if self.player_sprite.center_y < -100:
-            arcade.play_sound(self.sound_hurt)
+            if self.level >= 8:
+                # Если уровень 8 и выше — не умираем, а переходим на следующий
+                self.level += 1
+                self.reset_score = False  # Сохраняем очки при переходе
+                self.setup()  # Загружаем новую карту
+                return  # Выходим из update, чтобы не пошёл код ниже
+            else:
+                # Обычная логика смерти для уровней ниже 8-го
+                arcade.play_sound(self.sound_hurt)
 
-            # Save highscore
-            self.score_manager.save_highscore(
-                self.score
-            )
+                # Save highscore
+                self.score_manager.save_highscore(
+                    self.score
+                )
 
-            self.highscore = (
-                self.score_manager.highscore
-            )
+                self.highscore = (
+                    self.score_manager.highscore
+                )
 
-            # Open game over screen
-            game_over_view = GameOverView(
-                self.score,
-                self.highscore,
-                self.level
-            )
+                # Open game over screen
+                game_over_view = GameOverView(
+                    self.score,
+                    self.highscore,
+                    self.level
+                )
 
-            self.window.show_view(
-                game_over_view
-            )
+                self.window.show_view(
+                    game_over_view
+                )
 
-            return
+                return
 
         # Check if the player got to the end of the level
         if self.player_sprite.center_x >= self.end_of_map:
             self.level += 1
             self.reset_score = False
             self.setup()
+        # --- ЛОГИКА И ОБНОВЛЕНИЕ БОССА ---
+        if self.boss_physics_engine is not None:
+            for boss in self.boss_list:
+                # Мы убрали привязку по Y, босс больше не будет летать!
+                boss.update_boss_ai(self.player_sprite)
+                boss.update_animation(delta_time)
+                if boss.dead_finished:
+                    victory_view = VictoryView(
+                        self.score,
+                        self.highscore
+                    )
+
+                    self.window.show_view(victory_view)
+
+                    return
+
+            # Движок сам применит гравитацию и поставит босса на Touchable пол
+            self.boss_physics_engine.update()
+
+        # --- АТАКА БОССА ПО ИГРОКУ ---
+        for boss in self.boss_list:
+
+            attack_hitbox = boss.get_attack_hitbox()
+
+            if attack_hitbox:
+
+                # DEBUG ОТРИСОВКА
+                self.draw_attack_rect = attack_hitbox
+
+                # Урон игроку
+                if arcade.check_for_collision(
+                        attack_hitbox,
+                        self.player_sprite
+                ):
+
+                    if self.i_frame <= 0:
+                        self.p_hp -= 1
+                        self.i_frame = 1.5
+
+                        arcade.play_sound(self.sound_hit)
+
+        # --- КОНТАКТНЫЙ УРОН ---
+        if arcade.check_for_collision(boss, self.player_sprite):
+
+            if self.i_frame <= 0 and boss.state != "DEAD":
+
+                self.p_hp -= 1
+                self.i_frame = 1.5
+
+                arcade.play_sound(self.sound_hit)
+
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""

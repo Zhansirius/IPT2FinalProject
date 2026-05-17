@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="52" height="30" tilewidth="32" tileheight="32" infinite="0" nextlayerid="9" nextobjectid="45">
+ <tileset firstgid="1" source="../tsx_tilesets/dungeon_red.tsx"/>
+ <tileset firstgid="265" source="../tsx_tilesets/wall_turret.tsx"/>
+ <tileset firstgid="266" source="../tsx_tilesets/Robot Tileset SELL.tsx"/>
+ <layer id="1" name="bg" width="52" height="30">
+  <data encoding="csv">
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+</data>
+ </layer>
+ <objectgroup id="3" name="Spikes">
+  <object id="1" gid="288" x="1280" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="2" gid="288" x="1248" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="3" gid="288" x="1216" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="4" gid="288" x="448" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="5" gid="288" x="416" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="6" gid="288" x="384" y="544" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="7" gid="288" x="704" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="8" gid="288" x="672" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="9" gid="288" x="640" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="10" gid="288" x="1024" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="11" gid="288" x="992" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="12" gid="288" x="960" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="13" gid="288" x="448" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="14" gid="288" x="416" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="15" gid="288" x="384" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="16" gid="288" x="1312" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="17" gid="288" x="1280" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="18" gid="288" x="1248" y="928" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="1.5"/>
+    <property name="hide_time" type="float" value="2"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="21" gid="288" x="1568" y="768" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+  <object id="22" gid="288" x="64" y="768" width="32" height="32">
+   <properties>
+    <property name="active_time" type="float" value="2.5"/>
+    <property name="hide_time" type="float" value="1"/>
+    <property name="pop_height" type="float" value="32"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="2" name="Touchable" width="52" height="30">
+  <data encoding="csv">
+76,160,161,162,163,160,161,162,163,160,161,162,163,160,161,162,163,160,161,162,163,162,163,164,0,0,0,0,159,160,161,160,161,162,163,160,161,162,163,160,161,162,163,160,161,162,163,160,161,162,163,71,
+98,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,
+120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+98,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,
+120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,49,50,51,52,53,50,51,52,53,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,159,160,161,162,163,160,161,162,163,164,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+98,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,
+120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+98,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,
+120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+98,0,0,0,0,0,0,0,0,49,50,51,52,53,50,51,52,53,54,0,0,0,0,49,50,51,52,53,54,0,0,0,0,0,49,50,51,52,53,50,51,52,53,54,0,0,0,0,0,0,0,93,
+120,0,0,0,0,0,0,0,0,159,160,161,162,163,160,161,162,163,164,0,0,0,0,159,160,161,162,163,164,0,0,0,0,0,159,160,161,162,163,160,161,162,163,164,0,0,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+98,0,0,0,0,0,49,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,49,54,0,0,0,0,0,93,
+120,0,0,0,0,0,159,164,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,159,164,0,0,0,0,0,115,
+142,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,137,
+76,52,53,54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,49,50,51,71,
+98,162,163,164,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,159,160,161,93,
+120,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,
+76,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,93,
+98,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,115,
+120,50,51,52,53,53,50,51,52,53,50,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,50,51,52,53,137
+</data>
+ </layer>
+ <layer id="4" name="decorations" width="52" height="30">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,181,182,0,0,0,0,185,186,0,0,0,0,536871177,536871177,0,0,0,0,0,0,0,0,0,0,536871177,536871177,0,0,0,0,0,0,0,185,186,0,0,0,0,181,182,0,0,0,0,
+0,1610612782,0,0,0,0,0,203,204,0,0,0,0,207,208,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,207,208,0,0,0,0,203,204,0,0,3758096430,0,
+0,1610612781,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3758096429,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27,28,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2684354825,2684354825,0,0,45,46,0,0,2684354825,2684354825,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,265,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483913,0,
+0,265,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,6,0,0,0,0,0,0,0,0,0,21,22,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483913,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27,28,0,0,0,0,0,0,0,0,0,43,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3758096430,0,
+0,1610612782,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3758096429,0,
+0,1610612781,0,0,0,0,9,10,0,0,0,0,0,183,184,0,45,46,0,0,0,0,0,0,0,0,181,182,0,0,0,0,0,0,0,0,183,184,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,31,32,0,0,0,0,0,205,206,0,0,0,0,0,0,0,0,0,0,0,203,204,0,0,0,0,0,0,0,0,205,206,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,181,182,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,185,186,0,0,0,0,0,0,
+0,0,0,0,0,0,203,204,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,207,208,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,265,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483913,0,
+0,265,0,0,0,0,0,0,21,22,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,10,0,0,0,0,0,2147483913,0,
+0,265,0,0,0,0,0,0,43,44,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,31,32,0,0,0,0,0,2147483913,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="5" name="Shooters">
+  <object id="23" x="1007" y="71.25">
+   <properties>
+    <property name="interval" type="float" value="3"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="24" x="1040.25" y="71.5">
+   <properties>
+    <property name="interval" type="float" value="3"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="25" x="656.182" y="67.6364">
+   <properties>
+    <property name="interval" type="float" value="3"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" x="622.636" y="68.0909">
+   <properties>
+    <property name="interval" type="float" value="3"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-5"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" x="943.875" y="322.75">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" x="977.125" y="323">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" x="687.369" y="321.659">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" x="720.619" y="321.909">
+   <properties>
+    <property name="interval" type="float" value="2"/>
+    <property name="speed_x" type="float" value="0"/>
+    <property name="speed_y" type="float" value="-6"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="31" x="1599.3" y="496.295">
+   <properties>
+    <property name="interval" type="float" value="5"/>
+    <property name="speed_x" type="float" value="-6"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="32" x="1598.91" y="465.091">
+   <properties>
+    <property name="interval" type="float" value="5"/>
+    <property name="speed_x" type="float" value="-6"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="33" x="64.64" y="496.058">
+   <properties>
+    <property name="interval" type="float" value="5"/>
+    <property name="speed_x" type="float" value="6"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="34" x="64.25" y="464.854">
+   <properties>
+    <property name="interval" type="float" value="5"/>
+    <property name="speed_x" type="float" value="6"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="35" x="64.8465" y="911.53">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="36" x="64.4565" y="880.326">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="37" x="63.6875" y="847.5">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="38" x="1600.69" y="911.769">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="-7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="39" x="1600.3" y="880.565">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="-7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="40" x="1599.53" y="847.739">
+   <properties>
+    <property name="interval" type="float" value="7"/>
+    <property name="speed_x" type="float" value="-7"/>
+    <property name="speed_y" type="float" value="0"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="SpawnPoint">
+  <object id="41" name="SpawnPoint" x="558" y="374">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="BossLayer">
+  <object id="43" name="Boss" type="Boss" x="768" y="928">
+   <point/>
+  </object>
+ </objectgroup>
+</map>
