@@ -8,6 +8,13 @@ class MenuView(arcade.View):
         super().__init__()
         self.need_ui_update = False
 
+        # Main menu music
+        self.menu_music = arcade.load_sound(
+            "assets/MainMenuMusic/Menumusic.mp3"
+        )
+
+        self.music_player = None
+
         self.background_color = arcade.csscolor.DARK_BLUE
         # Animated background frames
         self.background_frames = []
@@ -37,7 +44,16 @@ class MenuView(arcade.View):
         self.update_ui_positions()
 
     def on_show_view(self):
-        arcade.set_background_color(self.background_color)
+
+        arcade.set_background_color(
+            self.background_color
+        )
+
+        if self.music_player is None:
+            self.music_player = self.menu_music.play(
+                volume=0.5,
+                loop=True
+            )
 
     def on_update(self, delta_time):
 
@@ -146,9 +162,22 @@ class MenuView(arcade.View):
 
         # Fullscreen toggle
         if key == arcade.key.F4:
+
+            was_playing = self.music_player is not None
+
+            if self.music_player:
+                self.music_player.pause()
+                self.music_player = None
+
             self.window.set_fullscreen(
                 not self.window.fullscreen
             )
+
+            if was_playing:
+                self.music_player = self.menu_music.play(
+                    volume=0.5,
+                    loop=True
+                )
 
         if key == arcade.key.ENTER:
             game_view = GameView()
@@ -177,6 +206,10 @@ class MenuView(arcade.View):
                 and
                 button_y - self.button_height / 2 <= y <= button_y + self.button_height / 2
         ):
+
+            if self.music_player:
+                self.music_player.pause()
+
             game_view = GameView()
             game_view.setup()
 
@@ -195,3 +228,8 @@ class MenuView(arcade.View):
 
         self.title_x = self.window.width / 2
         self.title_y = self.window.height / 2 + 180
+
+    def on_hide_view(self):
+
+        if self.music_player:
+            self.music_player.pause()
