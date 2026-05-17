@@ -22,6 +22,8 @@ The project includes: multiple levels, saving system, main menu + play & game ov
 - OOP Architecture
 - Unit Tests
 - Decorators and Generators
+- WASD movement
+- ATTACK on SPACE button
 <br>
 ## Technologies:
 
