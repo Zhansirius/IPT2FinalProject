@@ -46,7 +46,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 1
+        self.level = 10
 
         # Variable to hold our texture for our player
         self.player_texture = None
@@ -517,6 +517,7 @@ class GameView(arcade.View):
                             MusicManager.stop_music()
                             game_over_view = GameOverView(self.score, self.highscore, self.level)
                             self.window.show_view(game_over_view)
+                            return
 
                 if (bullet.right < 0 or bullet.left > self.end_of_map or
                         bullet.top < 0 or bullet.bottom > self.top_of_map):
@@ -545,7 +546,6 @@ class GameView(arcade.View):
                     if spike.timer >= spike.active_time:
                         spike.state = "falling"
                         spike.timer = 0.0
-
                     if arcade.check_for_collision(self.player_sprite, spike):
                         if self.i_frame <= 0:
                             self.p_hp -= 1
@@ -560,6 +560,7 @@ class GameView(arcade.View):
                                 MusicManager.stop_music()
                                 game_over_view = GameOverView(self.score, self.highscore, self.level)
                                 self.window.show_view(game_over_view)
+                                return
 
                 elif spike.state == "falling":
                     spike.center_y -= 4.0
@@ -612,19 +613,35 @@ class GameView(arcade.View):
                         self.p_hp -= 1
                         self.i_frame = 1.5
                         arcade.play_sound(self.sound_hit)
+                        if self.p_hp <= 0:
+                            arcade.play_sound(self.sound_hurt)
+                            self.score_manager.save_highscore(self.score)
+                            self.highscore = self.score_manager.highscore
+                            self.game_over_triggered = True
+                            MusicManager.stop_music()
+                            game_over_view = GameOverView(self.score, self.highscore, self.level)
+                            self.window.show_view(game_over_view)
+                            return
 
             if arcade.check_for_collision(boss, self.player_sprite):
                 if self.i_frame <= 0 and boss.state != "DEAD":
                     self.p_hp -= 1
                     self.i_frame = 1.5
                     arcade.play_sound(self.sound_hit)
+                    if self.p_hp <= 0:
+                        arcade.play_sound(self.sound_hurt)
+                        self.score_manager.save_highscore(self.score)
+                        self.highscore = self.score_manager.highscore
+                        self.game_over_triggered = True
+                        MusicManager.stop_music()
+                        game_over_view = GameOverView(self.score, self.highscore, self.level)
+                        self.window.show_view(game_over_view)
+                        return
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         if key == arcade.key.F4:
             self.window.set_fullscreen(not self.window.fullscreen)
-            # УДАЛЕНО: Вызовы match_window() отсюда убраны.
-            # Метод on_resize() сделает всё автоматически и вовремя.
 
         if key == arcade.key.ESCAPE:
             MusicManager.stop_music()
@@ -651,7 +668,6 @@ class GameView(arcade.View):
             self.player_sprite.cur_texture = 0
             self.player_sprite.hit_1_done = False
             self.player_sprite.hit_2_done = False
-
     def on_key_release(self, key, modifiers):
         """Called whenever a key is released."""
         if key == arcade.key.LEFT or key == arcade.key.A:
@@ -676,7 +692,6 @@ class GameView(arcade.View):
         if hasattr(self, "bg_camera") and self.bg_camera:
             self.bg_camera.match_window()
 
-        # ИСПРАВЛЕНО: Теперь отступы идентичны тем, что заданы в методе setup()
         self.hp_text.x = 20
         self.hp_text.y = height - 50
 

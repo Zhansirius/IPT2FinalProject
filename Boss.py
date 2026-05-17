@@ -33,7 +33,6 @@ class BossEnemy(arcade.Sprite):
 
         self.scale = 2.4  # Масштаб босса
 
-        # --- ТВОИ ОРИГИНАЛЬНЫЕ ПУТИ К ФАЙЛАМ И КОЛИЧЕСТВО КАДРОВ ---
         self.idle_textures = self._load_individual_pairs("assets/boss/individual sprites/01_demon_idle/demon_idle", 6)
         self.walk_textures = self._load_individual_pairs("assets/boss/individual sprites/02_demon_walk/demon_walk", 12)
         self.attack_textures = self._load_individual_pairs("assets/boss/individual sprites/03_demon_cleave/demon_cleave", 15)
