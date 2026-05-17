@@ -1,7 +1,7 @@
 # ITP Final project
 ## Type - Game Development
 ### Platformer Game
-#### Group: SE-2512, Creators: Nurlanov Shakhriyar & Sergeev Zhansir
+#### Group: SE-2512, Creators: Nurlanov Shakhriyar & Sergeyev Zhansir
 <br>
 <br>
 This project is a 2D Game based Platformer using Python Arcade library.
@@ -44,7 +44,7 @@ pip install arcade
 ## Team Members
 
 - Zhansir (Zhansirius):
-  Gameplay logic, enemies, combat system
+  Gameplay logic, enemies, combat system, level design, sound design
 
 - Shakhriyar (Lunie69):
   UI, menus, fullscreen system, testing
