@@ -35,8 +35,6 @@ class GameView(arcade.View):
         self.sound_hit = arcade.load_sound("assets/sounds/undertale-damage-taken.mp3")
         self.sound_hit1 = arcade.load_sound("assets/sounds/undertale-sound-effect-attack-hit.mp3")
         self.sound_hurt = arcade.load_sound("assets/sounds/undertale-soul-shatter.mp3")
-        self.sound_hit67 = arcade.load_sound("assets/sounds/hurt grunt .wav")
-        self.sound_hit69 = arcade.load_sound("assets/sounds/isaac dies new 1.wav")
 
         self.bg_camera = arcade.Camera2D()
 
@@ -47,7 +45,7 @@ class GameView(arcade.View):
         self.end_of_map = 0
 
         # Level number to load
-        self.level = 10
+        self.level = 1
 
         # Variable to hold our texture for our player
         self.player_texture = None
@@ -332,7 +330,6 @@ class GameView(arcade.View):
                         continue
 
                     boss.hp -= 1
-                    arcade.play_sound(self.sound_hit67)
                     print("Boss HP:", boss.hp)
 
                     boss.change_x = 0
@@ -344,7 +341,6 @@ class GameView(arcade.View):
                     if boss.hp <= 0:
                         boss.state = "DEAD"
                         boss.cur_texture = 0
-                        arcade.play_sound(self.sound_hit69)
                         self.score_manager.save_highscore(self.score)
                         self.highscore = self.score_manager.highscore
 
